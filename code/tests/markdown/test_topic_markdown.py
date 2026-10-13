@@ -1,0 +1,511 @@
+import re
+from pathlib import Path
+
+import pytest
+
+from src.markdown import (
+    EvidenceAnnotation,
+    MemoryUnit,
+    TopicFormatError,
+    append_memory_unit,
+    parse_topic_tree,
+)
+from src.management import MemoryWorkspace
+from src.markdown.parser import scan_topic_contract, topic_format_diagnostics
+
+
+def test_contract_scan_recovers_syntax_without_accepting_broken_evidence(tmp_path: Path):
+    (tmp_path / "bad.md").write_text(
+        "[^bad]: malformed definition\n"
+        "Still visible [link](target.md#^target-id).[^bad] ^old-id ^alias-id\n\n"
+        "Invalid ID [link](target.md). ^bad_id\n\n"
+        "Legacy.[^mem_old]\n\n"
+        "```\nFake ^fake-id\n```\n",
+        encoding="utf-8",
+    )
+    units = scan_topic_contract(tmp_path)
+    assert [u.memory_id for u in units] == ["old-id", "alias-id", None, "mem_old"]
+    assert units[0].line_number == 2
+    assert units[0].relation_targets == ("target-id",)
+    assert units[0].evidence is None
+    assert units[2].line_number == 4
+    with pytest.raises(TopicFormatError):
+        parse_topic_tree(tmp_path)
+
+
+def test_contract_scan_matches_valid_units_including_aliases_and_legacy(tmp_path: Path):
+    (tmp_path / "good.md").write_text(
+        "One.[^e] ^one-id ^alias-id\n\n"
+        "Legacy.[^mem_old] Next.[^mem_next]\n\n"
+        "[^e]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^mem_old]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^mem_next]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+    strict = parse_topic_tree(tmp_path)
+    scanned = scan_topic_contract(tmp_path)
+    fields = lambda u: (u.memory_id, u.content, u.evidence, u.relation_targets, u.topic_path)
+    assert list(map(fields, strict)) == list(map(fields, scanned))
+
+
+def test_topic_diagnostics_reports_all_undefined_footnotes_across_files(
+    tmp_path: Path,
+):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "a.md").write_text(
+        "First.[^e1][^e2] ^abc123\n\n"
+        "Second.[^e1] ^def456\n\n"
+        "[^e2]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+    (topics / "b.md").write_text(
+        "Third.[^e3] ^fedcba\n", encoding="utf-8",
+    )
+
+    findings = topic_format_diagnostics(topics)
+
+    assert findings == (
+        "undefined Topic footnotes (repair all): "
+        "id=e1 file=a.md line=1 block=abc123 | "
+        "id=e1 file=a.md line=3 block=def456 | "
+        "id=e3 file=b.md line=1 block=fedcba",
+    )
+    with pytest.raises(TopicFormatError, match="undefined footnote: e1"):
+        parse_topic_tree(topics)
+
+
+def test_topic_diagnostics_collects_all_missing_source_footnotes_before_return(
+    tmp_path: Path,
+):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "a.md").write_text(
+        "First without evidence. ^same-id\n\n"
+        "Second without evidence. ^second-id\n\n"
+        "[^orphan]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^orphan]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+    (topics / "b.md").write_text(
+        "Third without evidence. ^same-id\n", encoding="utf-8",
+    )
+
+    findings = "\n".join(topic_format_diagnostics(topics))
+
+    assert "block=same-id file=a.md line=1" in findings
+    assert "block=second-id file=a.md line=3" in findings
+    assert "block=same-id file=b.md line=1" in findings
+    assert "id=same-id first=a.md:1 duplicate=b.md:1" in findings
+    assert "id=orphan file=a.md lines=[5, 6] occurrences=2" in findings
+    assert "id=orphan file=a.md line=5" in findings
+    with pytest.raises(TopicFormatError):
+        parse_topic_tree(topics)
+
+
+def test_topic_diagnostics_collects_other_independent_block_and_definition_errors(
+    tmp_path: Path,
+):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "[^empty] ^abc123\n\n"
+        "Invalid ID. ^bad_id\n\n"
+        "[^empty]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^bad-date]: Time: `2026-02-30`; Sources: [D1:2](../sources/D1.md#d1-2)\n"
+        "[^no-link]: Time: `undated`; Sources: D1:3\n",
+        encoding="utf-8",
+    )
+
+    findings = "\n".join(topic_format_diagnostics(topics))
+
+    assert "footnote=empty file=bad.md line=1" in findings
+    assert "id=bad_id file=bad.md line=3" in findings
+    assert "date=2026-02-30 file=bad.md line=6 footnote=bad-date" in findings
+    assert "id=no-link file=bad.md line=7" in findings
+
+
+def test_parse_obisidian_paragraph_block_with_multiple_evidence_annotations(
+    tmp_path: Path,
+):
+    topics = tmp_path / "topics"
+    topic = topics / "personal" / "residence.md"
+    topic.parent.mkdir(parents=True)
+    topic.write_text(
+        "# Personal\n\n## Residence\n\n"
+        "The user moved to Shanghai.[^e-move] They later moved to "
+        "[Pudong](../places/pudong.md#^place-1234).[^e-pudong] ^8c41d20fa693\n\n"
+        "[^e-move]: Time: `2026-07-20`; Sources: "
+        "[D1:1, migration discussion](../../sources/D1.md#d1-1)\n"
+        "[^e-pudong]: Time: `2026-08-03`; Sources: "
+        "[D1:2](../../sources/D1.md#d1-2)\n",
+        encoding="utf-8",
+    )
+
+    units = parse_topic_tree(topics)
+
+    assert len(units) == 1
+    assert units[0].memory_id == "8c41d20fa693"
+    assert units[0].content == (
+        "The user moved to Shanghai. They later moved to "
+        "[Pudong](../places/pudong.md#^place-1234)."
+    )
+    assert units[0].relation_targets == ("place-1234",)
+    assert units[0].evidence == (
+        EvidenceAnnotation(
+            citation_id="e-move",
+            quote="The user moved to Shanghai.",
+            when="2026-07-20",
+            source_refs=("D1:1",),
+            source_links=("../../sources/D1.md#d1-1",),
+        ),
+        EvidenceAnnotation(
+            citation_id="e-pudong",
+            quote="They later moved to [Pudong](../places/pudong.md#^place-1234).",
+            when="2026-08-03",
+            source_refs=("D1:2",),
+            source_links=("../../sources/D1.md#d1-2",),
+        ),
+    )
+
+
+def test_parse_obisidian_paragraph_rejects_invalid_or_duplicate_block_ids(
+    tmp_path: Path,
+):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "First.[^e-1] ^bad_id\n\nSecond.[^e-2] ^same-id\n\n"
+        "Third.[^e-3] ^same-id\n\n"
+        "[^e-1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^e-2]: Time: `undated`; Sources: [D1:2](../sources/D1.md#d1-2)\n"
+        "[^e-3]: Time: `undated`; Sources: [D1:3](../sources/D1.md#d1-3)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(TopicFormatError, match="invalid block_id|duplicate memory_id"):
+        parse_topic_tree(topics)
+
+
+def test_parse_topic_rejects_untracked_prose_in_block_workspace(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "# Topic\n\nTracked fact.[^e-1] ^abc123\n\n"
+        "This paragraph has no block ID or evidence.\n\n"
+        "[^e-1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(TopicFormatError, match="memory block ID required") as exc:
+        parse_topic_tree(topics)
+    assert "This paragraph has no block ID or evidence." in str(exc.value)
+
+
+def test_parse_topic_aggregates_all_malformed_footnote_definitions(tmp_path: Path):
+    topics = tmp_path / "topics"
+    (topics / "people").mkdir(parents=True)
+    (topics / "people" / "john.md").write_text(
+        "Fact.[^e1] ^abc123\n\n"
+        "[^e1]: Sources: [D1:1](../../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+    (topics / "people" / "maria.md").write_text(
+        "Fact.[^e2] ^def456\n\n"
+        "[^e2]: Time: `2026-08-23` [D1:2](../../sources/D1.md#d1-2)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(TopicFormatError, match="repair all") as exc:
+        parse_topic_tree(topics)
+
+    message = str(exc.value)
+    assert "people/john.md:3" in message
+    assert "people/maria.md:3" in message
+    assert "[^e1]: Sources:" in message
+    assert "[^e2]: Time:" in message
+
+
+@pytest.mark.parametrize(
+    "paragraph, definition, message",
+    [
+        (
+            "Supported.[^e-1] Unsupported tail. ^abc123",
+            "[^e-1]: Time: `2026-01-01`; Sources: [D1:1](../sources/D1.md#d1-1)",
+            "content after final evidence",
+        ),
+        (
+            "Fact.[^e-1] ^abc123",
+            "[^e-1]: Time: `2026-02-30`; Sources: [D1:1](../sources/D1.md#d1-1)",
+            "invalid evidence date",
+        ),
+        (
+            "Fact.[^e-1] ^abc123",
+            "[^e-1]: Time: `2026-13`; Sources: [D1:1](../sources/D1.md#d1-1)",
+            "invalid evidence date",
+        ),
+    ],
+)
+def test_parse_topic_rejects_uncovered_tail_or_invalid_calendar_date(
+    tmp_path: Path, paragraph: str, definition: str, message: str
+):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        f"# Topic\n\n{paragraph}\n\n{definition}\n", encoding="utf-8"
+    )
+
+    with pytest.raises(TopicFormatError, match=message) as exc:
+        parse_topic_tree(topics)
+    if message == "content after final evidence":
+        assert "file=bad.md" in str(exc.value)
+        assert "trailing_excerpt='Unsupported tail.'" in str(exc.value)
+        assert "trailing_chars=17" in str(exc.value)
+
+
+def test_parse_topic_reports_all_uncovered_tails(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "First.[^e-1] ^x_placeholder ^abc123\n\n"
+        "Second.[^e-2] leftover ^def456\n\n"
+        "[^e-1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^e-2]: Time: `undated`; Sources: [D1:2](../sources/D1.md#d1-2)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(TopicFormatError, match="repair all") as exc:
+        parse_topic_tree(topics)
+    message = str(exc.value)
+    assert "block=abc123; file=bad.md; line=1; trailing_excerpt='^x_placeholder'" in message
+    assert "block=def456; file=bad.md; line=3; trailing_excerpt='leftover'" in message
+
+
+def test_parse_topic_reports_all_unused_footnotes_with_locations(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "Fact.[^used] ^abc123\n\n"
+        "[^used]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^orphan-1]: Time: `undated`; Sources: [D1:2](../sources/D1.md#d1-2)\n"
+        "[^orphan-2]: Time: `undated`; Sources: [D1:3](../sources/D1.md#d1-3)\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TopicFormatError, match="unused footnote definitions") as exc:
+        parse_topic_tree(topics)
+    assert "id=orphan-1 file=bad.md line=4" in str(exc.value)
+    assert "id=orphan-2 file=bad.md line=5" in str(exc.value)
+
+
+def test_parse_topic_reports_duplicate_footnote_locations(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "Fact.[^e1] ^abc123\n\n"
+        "[^e1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^e1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TopicFormatError, match="duplicate footnote definitions") as exc:
+        parse_topic_tree(topics)
+    assert "id=e1 file=bad.md lines=[3, 4] occurrences=2" in str(exc.value)
+
+
+def test_parse_topic_reports_duplicate_memory_id_locations(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "First.[^e1] ^same-id\n\nSecond.[^e2] ^same-id\n\n"
+        "[^e1]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
+        "[^e2]: Time: `undated`; Sources: [D1:2](../sources/D1.md#d1-2)\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(TopicFormatError, match="duplicate memory_ids") as exc:
+        parse_topic_tree(topics)
+    assert "id=same-id first=bad.md:1 duplicate=bad.md:3" in str(exc.value)
+
+
+def test_parse_freeform_topic_with_adjacent_memory_ids(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topic = topics / "personal" / "residence.md"
+    topic.parent.mkdir(parents=True)
+    topic.write_text(
+        "# Personal\n\n## Residence\n\n"
+        "The user moved to Shanghai.[^mem_move] "
+        "They then started a new job.[^mem_job][^mem_contract]\n\n"
+        "[^mem_move]: Time: `2026-07-20`; Sources: [move](../../sources/thread.md#msg-1)\n"
+        "[^mem_job]: Time: `2026-08-05`; Sources: [job](../../sources/thread.md#msg-2)\n"
+        "[^mem_contract]: Time: `undated`; Sources: [contract](../../documents/job.pdf#page=2)\n",
+        encoding="utf-8",
+    )
+
+    units = parse_topic_tree(topics)
+
+    assert [unit.memory_id for unit in units] == [
+        "mem_move",
+        "mem_job",
+        "mem_contract",
+    ]
+    assert units[0].content == "The user moved to Shanghai."
+    assert units[1].content == "They then started a new job."
+    assert units[2].content == "They then started a new job."
+    assert units[2].when is None
+    assert units[0].topic_path == "personal/residence.md"
+    assert units[0].headings == ("Personal", "Residence")
+
+
+def test_parse_topic_rejects_duplicate_or_undefined_ids(tmp_path: Path):
+    topics = tmp_path / "topics"
+    topics.mkdir()
+    (topics / "bad.md").write_text(
+        "Fact.[^mem_a] Again.[^mem_a] Missing.[^mem_b]\n\n"
+        "[^mem_a]: Time: `2026-01-01`; Sources: [source](../sources/D1.md#d1-1)\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(TopicFormatError, match="duplicate memory_id|undefined footnote"):
+        parse_topic_tree(topics)
+
+
+def test_append_memory_unit_renders_authoritative_footnote(tmp_path: Path):
+    topic = tmp_path / "topics" / "people" / "alice.md"
+    unit = MemoryUnit(
+        memory_id="mem_abc123",
+        content="Alice moved to Shanghai.",
+        when="2026-07-20",
+        source_refs=("D1:2",),
+        source_links=("../../sources/D1.md#d1-2",),
+        topic_path="people/alice.md",
+        headings=("Alice", "Residence"),
+        created_order=0,
+    )
+
+    append_memory_unit(topic, unit)
+    parsed = parse_topic_tree(tmp_path / "topics")
+
+    assert parsed == [unit]
+    text = topic.read_text(encoding="utf-8")
+    assert "Alice moved to Shanghai.[^mem_abc123]" in text
+    assert "[^mem_abc123]: Time: `2026-07-20`; Sources:" in text
+    assert "·" not in text
+    assert "[D1:2](../../sources/D1.md#d1-2)" in text
+
+
+def test_workspace_save_memory_writes_parseable_footnote_topic(tmp_path: Path):
+    workspace = MemoryWorkspace(tmp_path)
+    workspace.archive_sessions([{
+        "observation_date": "2026-07-20",
+        "turns": [("user", "I moved to Shanghai.")],
+        "refs": ["D1:1"],
+    }])
+
+    workspace.save_memory([{
+        "when": "2026-07-20",
+        "content": "The user moved to Shanghai.",
+        "refs": ["D1:1"],
+        "topic_path": "personal/residence.md",
+        "headings": ["Personal", "Residence"],
+    }])
+
+    units = parse_topic_tree(tmp_path / "topics")
+    assert len(units) == 1
+    assert units[0].content == "The user moved to Shanghai."
+    assert units[0].source_refs == ("D1:1",)
+    assert re.fullmatch(r"[0-9a-f]{8}", units[0].memory_id)
+    assert len(units[0].evidence) == 1
+    assert units[0].evidence[0].when == "2026-07-20"
+    text = (tmp_path / "topics/personal/residence.md").read_text()
+    assert f"^{units[0].memory_id}" in text
+    assert "<!-- memory-event:" not in text
+
+
+def test_workspace_rebuilds_timeline_from_topic_without_timeline_catalog(tmp_path: Path):
+    workspace = MemoryWorkspace(tmp_path)
+    workspace.archive_sessions([{
+        "observation_date": "2026-07-20",
+        "turns": [("user", "I moved to Shanghai.")],
+        "refs": ["D1:1"],
+    }])
+    workspace.save_memory([{
+        "when": "2026-07-20",
+        "content": "The user moved to Shanghai.",
+        "refs": ["D1:1"],
+        "topic_path": "personal/residence.md",
+        "headings": ["Personal", "Residence"],
+    }])
+    timeline = tmp_path / "timeline"
+    for path in sorted(timeline.rglob("*"), reverse=True):
+        path.unlink() if path.is_file() else path.rmdir()
+    timeline.rmdir()
+
+    organizer = MemoryWorkspace(tmp_path)
+    result = organizer.shell(
+        "mkdir -p topics/life && mv topics/personal/residence.md topics/life/residence.md"
+    )
+
+    assert result.returncode == 0
+    assert "topics/life/residence.md" in (tmp_path / "timeline/2026/07/20.md").read_text()
+
+
+def test_workspace_save_memory_accepts_undated_event(tmp_path: Path):
+    workspace = MemoryWorkspace(tmp_path)
+    workspace.archive_sessions([{"observation_date": "2026-01-01", "turns": [("user", "I like tea")], "refs": ["D1:1"]}])
+
+    workspace.save_memory([{"when": "undated", "content": "The user likes tea.", "refs": ["D1:1"], "topic_path": "preferences.md", "headings": ["Preferences"]}])
+
+    assert not (tmp_path / "timeline/undated.md").exists()
+    assert parse_topic_tree(tmp_path / "topics")[0].when is None
+
+
+def test_workspace_save_memory_keeps_year_precision_in_timeline(
+    tmp_path: Path,
+):
+    workspace = MemoryWorkspace(tmp_path)
+    workspace.archive_sessions([{
+        "observation_date": "2023-05-08",
+        "turns": [("user", "I painted that lake sunrise last year.")],
+        "refs": ["D1:1"],
+    }])
+
+    workspace.save_memory([{
+        "when": "2022",
+        "content": "The user painted a lake sunrise in 2022.",
+        "refs": ["D1:1"],
+        "topic_path": "creative/painting.md",
+        "headings": ["Creative work", "Painting"],
+    }])
+
+    unit = parse_topic_tree(tmp_path / "topics")[0]
+    assert unit.when == "2022"
+    timeline = (tmp_path / "timeline/2022.md").read_text()
+    assert "The user painted a lake sunrise in 2022." in timeline
+    assert '"when": "2022"' in (tmp_path / "recent_events.jsonl").read_text()
+
+
+def test_workspace_normalizes_temporary_ids_and_bare_source_handles(
+    tmp_path: Path,
+):
+    workspace = MemoryWorkspace(tmp_path)
+    workspace.archive_sessions([{
+        "observation_date": "2026-08-03",
+        "turns": [("user", "I moved to Pudong.")],
+        "refs": ["D1:1"],
+    }])
+    workspace._refresh_stage()
+
+    result = workspace.shell(
+        "mkdir -p topics/personal && "
+        "printf '%s\\n' '# Personal' '' '## Residence' '' "
+        "'On 2026-08-03, the user moved to Pudong.[^new-evidence-1] ^new-block-1' '' "
+        "'[^new-evidence-1]: Time: `2026-08-03`; Sources: D1:1' "
+        "> topics/personal/residence.md"
+    )
+
+    assert result.returncode == 0
+    text = (tmp_path / "topics/personal/residence.md").read_text()
+    assert "new-evidence-1" not in text
+    assert "new-block-1" not in text
+    assert "[D1:1](../../sources/D1.md#d1-1)" in text
+    unit = parse_topic_tree(tmp_path / "topics")[0]
+    assert re.fullmatch(r"[0-9a-f]{8}", unit.memory_id)
+    assert re.fullmatch(r"e-[0-9a-f]{10}", unit.evidence[0].citation_id)

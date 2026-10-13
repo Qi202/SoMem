@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "somem-framework"
+version = "0.1.0"
+description = "Self-organized document memory framework"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[project.scripts]
+somem = "somem.cli:main"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools]
+package-dir = { "" = "code" }
+
+[tool.setuptools.packages.find]
+where = ["code"]
+include = ["somem*", "src*"]
