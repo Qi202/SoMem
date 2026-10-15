@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .bm25 import _normalize_path_prefix
 
 _RRF_K = 60
 _CANDIDATE_MULTIPLIER = 5
@@ -99,14 +98,9 @@ def fused_search(
         date_from=date_from, date_to=date_to,
     )
     embedding_rows = embedding_index.search(
-        query, top_k=candidate_count,
+        query, top_k=candidate_count, path_prefix=path_prefix,
         date_from=date_from, date_to=date_to,
     )
-    if path_prefix:
-        prefix = _normalize_path_prefix(path_prefix)
-        embedding_rows = [
-            row for row in embedding_rows if row["path"].startswith(prefix)
-        ]
     return rrf_fuse(
         bm25_rows, embedding_rows,
         alpha=resolve_alpha(query), top_k=top_k,

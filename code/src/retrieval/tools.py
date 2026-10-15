@@ -144,6 +144,7 @@ def execute_tool_call(
         results = index.search(
             query,
             top_k=top_k,
+            path_prefix=args.get("path_prefix") or None,
             date_from=args.get("date_from") or None,
             date_to=args.get("date_to") or None,
         )

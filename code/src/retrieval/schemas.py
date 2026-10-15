@@ -81,6 +81,7 @@ TOOL_DEFINITIONS = [
         "parameters": {"type": "object", "properties": {
             "query": {"type": "string"},
             "top_k": {"type": "integer", "minimum": 1, "maximum": 10},
+            "path_prefix": {"type": "string", "description": "Restrict paths before ranking, e.g. topics/ or sources/. Relative prefixes resolve under topics."},
             "date_from": {"type": "string", "description": "Inclusive lower bound: YYYY, YYYY-MM, or YYYY-MM-DD."},
             "date_to": {"type": "string", "description": "Inclusive upper bound: YYYY, YYYY-MM, or YYYY-MM-DD."},
         }, "required": ["query"]},
