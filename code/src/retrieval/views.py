@@ -1,6 +1,8 @@
 """Visible memory files and tool availability for each retrieval condition."""
 
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from .schemas import (
@@ -31,14 +33,16 @@ def memory_files(
 
     def visible_markdown(path: Path) -> bool:
         relative = path.relative_to(root)
+        if path != core_file(root) and relative.as_posix() in {"core.md", "topics/core.md"}:
+            return False
         if selected is not None:
-            if relative.as_posix() == "core.md":
+            if relative.as_posix() in {"core.md", "topics/core.md"}:
                 return "core" in selected_set
             return bool(relative.parts and relative.parts[0] in selected_set)
         return (
             views is None
             or relative.parts[0] in views
-            or relative.as_posix() == "core.md"
+            or relative.as_posix() in {"core.md", "topics/core.md"}
         )
 
     result = [

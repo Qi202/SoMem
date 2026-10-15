@@ -5,6 +5,8 @@ import re
 import shutil
 import time
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 from urllib.parse import quote
 
@@ -133,7 +135,9 @@ def _rmtree_with_retry(path: Path, *, ignore_errors: bool = False) -> None:
 
 class BlockViewsMixin:
     def _synchronize(self) -> str:
-        core = self.stage_dir / "core.md"
+        core = core_file(self.stage_dir)
+        if core.parent.name == "topics" and (self.stage_dir / "core.md").exists():
+            raise ValueError("Core belongs in topics/core.md for this workspace; do not create root core.md")
         if core.exists():
             # The Luna routing experiment is prone to producing an oversized
             # Core and malformed citations in the same candidate. Surface the
@@ -219,7 +223,7 @@ class BlockViewsMixin:
                 "duplicate Core footnote definitions (repair all): "
                 + " | ".join(duplicate_definitions)
             )
-        annotations = definitions(lines, source_path="core.md")
+        annotations = definitions(lines, source_path=core_file(self.stage_dir).relative_to(self.stage_dir).as_posix())
         citation_lines: dict[str, list[int]] = {}
         for line_number, line in enumerate(lines, 1):
             if definition_match(line) is None:

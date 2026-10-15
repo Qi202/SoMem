@@ -1,6 +1,6 @@
 """The names the runtime owns inside a memory workspace.
 
-A workspace holds the memory — `core.md`, `topics/`, `sources/` and the
+A workspace holds the memory — `topics/core.md`, `topics/`, `sources/` and the
 derived views — and beside it a small runtime area: cursors, the write lock,
 staged backups, retrieval caches. A workspace kept under version control also
 holds that tool's own directory. Neither is memory: both are hidden from
@@ -74,3 +74,14 @@ def has_runtime_dir(memory_dir: Path | str) -> bool:
     """True when this directory already carries a runtime area."""
     root = Path(memory_dir)
     return any((root / name).is_dir() for name in RUNTIME_DIR_NAMES)
+
+
+def core_file(memory_dir: Path | str) -> Path:
+    """Core in new workspaces lives under topics; retain existing legacy paths.
+
+    This lookup never creates or moves memory files.
+    """
+    root = Path(memory_dir)
+    nested = root / "topics" / "core.md"
+    legacy = root / "core.md"
+    return legacy if legacy.is_file() and not nested.is_file() else nested

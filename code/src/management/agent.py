@@ -9,6 +9,8 @@ import shutil
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..agent_runtime import ClaudeCodeAgent
@@ -80,7 +82,7 @@ def _core_capacity_error(
 def _misplaced_id_guidance(workspace: MemoryWorkspace) -> str:
     """Diagnose misplaced IDs without guessing ownership or changing content."""
     findings = []
-    paths = [workspace.stage_dir / "core.md", *sorted((workspace.stage_dir / "topics").rglob("*.md"))]
+    paths = sorted(set([core_file(workspace.stage_dir), *(workspace.stage_dir / "topics").rglob("*.md")]))
     for path in paths:
         if not path.is_file():
             continue
@@ -661,6 +663,9 @@ def _run_agent(
             record_live_event(archive_boundary)
         task = f"{task}\n\nCurrent workspace structure:\n{workspace.structure()}"
         system_prompt = SYSTEM_PROMPT
+        core_relative = core_file(workspace.stage_dir).relative_to(workspace.stage_dir).as_posix()
+        task = task.replace("topics/core.md", core_relative)
+        system_prompt = system_prompt.replace("topics/core.md", core_relative)
         tool_recoveries = 0
         if config.tool_failure_recovery_enabled:
             from .tool_recovery import RecoveryBudget, run_with_tool_recovery

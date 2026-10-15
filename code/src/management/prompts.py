@@ -4,7 +4,7 @@ SYSTEM_PROMPT = """You manage a file-native memory workspace.
 
 You write prose and evidence footnotes. The Runtime assigns block IDs to new paragraphs. Never invent a block ID. When replacing existing text, copy its existing block IDs unchanged on the same facts.
 
-Every paragraph you add to a Topic file or to core.md must end with an evidence citation and be followed by that citation's definition. A paragraph without one prevents the staged candidate from being committed. The shape is always:
+Every paragraph you add to a Topic file or to topics/core.md must end with an evidence citation and be followed by that citation's definition. A paragraph without one prevents the staged candidate from being committed. The shape is always:
 
     Calvin acquired a mansion in Japan.[^e1]
 
@@ -12,7 +12,7 @@ Every paragraph you add to a Topic file or to core.md must end with an evidence 
 
 Bulleted lists and bare prose are not memory paragraphs and cannot carry evidence. Write full sentences in paragraphs.
 
-Never modify files under sources/. Topic Markdown is the editable semantic memory. Timeline, Recent, and Relations are derived by the Runtime; retrieval indexes and the runtime directory's metadata are also code-managed. Never edit these derived or operational files directly. Edit core.md only for stable information needed in every interaction.
+Never modify files under sources/. Topic Markdown is the editable semantic memory. Timeline, Recent, and Relations are derived by the Runtime; retrieval indexes and the runtime directory's metadata are also code-managed. Never edit these derived or operational files directly. Edit topics/core.md only for stable information needed in every interaction.
 
 Organize topics/ by subject: one file per person, relationship, or recurring theme, grouped into directories such as topics/people/ and topics/relationship/. Never create a file per session or per date — a session's facts are distributed into whichever subject files they belong to. One memory paragraph is one coherent Markdown paragraph, which may contain several related facts.
 
@@ -101,7 +101,7 @@ The complete source conversation is already included below. Inspect whichever ex
 
 Preserve complete historical state changes. Use the observation date only to resolve explicit relative dates in the source, not as the default date of every fact.
 
-Update `core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory.
+Update `topics/core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory.
 
 Observation date:
 {observation_date}
@@ -117,18 +117,18 @@ The complete source conversations are already included below. Inspect whichever 
 
 Preserve complete historical state changes. Use each session's observation date only to resolve explicit relative dates in that source, not as the default date of every fact.
 
-Update `core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory.
+Update `topics/core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory.
 
 Sessions:
 {sessions}"""
 
-DEFAULT_CORE_ROUTING_GUIDANCE = """Update `core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory."""
+DEFAULT_CORE_ROUTING_GUIDANCE = """Update `topics/core.md` only for stable information that should be visible in every future interaction, such as persistent preferences, long-term goals, active ongoing work, or mandatory constraints. Keep source references in Core Memory."""
 
 LUNA_TOPIC_ROUTING_GUIDANCE = """Classify information by how it must be accessed later, not by how important, personal, or memorable it seems.
 
 Write concrete facts, events, dates, milestones, state changes, activities, possessions, trips, awards, pets, gifts, creative works, project updates, temporary states, and supporting history to subject-organized Topic Memory. They remain Topic facts even when they are important, enduring, or relevant to an active project.
 
-Also update `core.md` with a short source-supported paragraph when the conversations establish stable cross-topic context: a durable identity or self-definition, persistent preference, explicitly stated long-term goal or commitment, enduring important relationship role, or mandatory communication constraint. These qualifying facts should not be omitted from Core merely because their complete evidence and history are already recorded in Topic Memory. It is normal for a batch to change Core when it introduces or materially updates such a fact; do not create Core content to satisfy a quota.
+Also update `topics/core.md` with a short source-supported paragraph when the conversations establish stable cross-topic context: a durable identity or self-definition, persistent preference, explicitly stated long-term goal or commitment, enduring important relationship role, or mandatory communication constraint. These qualifying facts should not be omitted from Core merely because their complete evidence and history are already recorded in Topic Memory. It is normal for a batch to change Core when it introduces or materially updates such a fact; do not create Core content to satisfy a quota.
 
 When the same information qualifies for both layers, keep only its concise, currently stable meaning in Core and keep its concrete events, dates, examples, changes, and supporting history in Topic Memory. Core is not a biography, historical summary, fact cache, or project record. A Core summary never substitutes for the corresponding concrete Topic facts. If a fact is genuinely ambiguous, favor Topic, but do not use uncertainty as a reason to omit clearly qualifying stable context. Preserve source references in both Core and Topic Memory.
 
@@ -245,7 +245,7 @@ TOOLS = [
             "name": "shell",
             "description": (
                 "Run portable POSIX shell commands to read the memory workspace or edit "
-                "authoritative topics/ and core.md. "
+                "authoritative topics/ and topics/core.md. "
                 "Source and derived views are read-only; Runtime validates and rebuilds them."
             ),
             "parameters": {

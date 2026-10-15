@@ -7,6 +7,8 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from claude_agent_sdk import tool
@@ -185,7 +187,7 @@ def management_tools(
             )
         )
 
-    @tool("Write", "Create or replace the ENTIRE core.md or topics/ file; this does "
+    @tool("Write", "Create or replace the ENTIRE topics/core.md or topics/ file; this does "
           "not append. Include all retained prose AND its footnote definitions. "
           "To add a footnote to an existing file, use Edit instead of overwriting "
           "the file with only footnotes. Each Topic fact paragraph must end with "
@@ -202,7 +204,7 @@ def management_tools(
             arguments["path"], arguments["content"]
         ))
 
-    @tool("Edit", "Replace non-empty exact text in core.md or a file under topics/. "
+    @tool("Edit", "Replace non-empty exact text in topics/core.md or a file under topics/. "
           "Use text from a successful Read. A failed call changes nothing; Read the "
           "target again before retrying. Preserve existing IDs and footnote definitions. "
           "Never replace a bare citation label to insert prose or a definition.", {
@@ -298,7 +300,7 @@ def management_tools(
     @tool(
         "core_token_count",
         (
-            "Count staged core.md with the Runtime's exact tokenizer during "
+            "Count staged topics/core.md with the Runtime's exact tokenizer during "
             "a Core-capacity repair. This tool is read-only. Call it after "
             "each Core edit and keep the final count at or below the target."
         ),
@@ -322,7 +324,7 @@ def management_tools(
             record.update({"status": "error", "output": payload})
             is_error = True
         else:
-            count = core_token_count(workspace.stage_dir / "core.md")
+            count = core_token_count(core_file(workspace.stage_dir))
             core_repair_state.record(count)
             payload = {
                 "token_count": count,

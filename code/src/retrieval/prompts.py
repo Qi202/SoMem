@@ -1,4 +1,4 @@
-"""Model instructions for NativeMem retrieval."""
+"""Model instructions for SoMem retrieval."""
 
 ANSWER_PROMPT = """User question:
 {question}
@@ -17,7 +17,7 @@ Available files:
 {structure}
 """
 
-RETRIEVAL_PROMPT = """Answer one memory-benchmark question from a read-only NativeMem workspace.
+RETRIEVAL_PROMPT = """Answer one memory-benchmark question from a read-only SoMem workspace.
 Condition: {condition}
 Bash working directory: {workspace_root}
 The shell starts in this directory. Use Inventory paths relative to this directory.
@@ -139,7 +139,7 @@ After tool use, output exactly one <answer>...</answer> block and no reasoning.
 """
 
 
-PIPELINE_PROMPT = """Answer one memory-benchmark question from a frozen NativeMem snapshot.
+PIPELINE_PROMPT = """Answer one memory-benchmark question from a frozen SoMem snapshot.
 
 No retrieval tools are available or needed. Do not attempt to inspect files,
 invoke tools, or describe searches you did not perform. Use only the Core,
@@ -166,7 +166,7 @@ Output exactly one <answer>...</answer> block and no reasoning.
 """
 
 
-EVIDENCE_PACKET_PROMPT = """Answer one memory-benchmark question from a frozen NativeMem snapshot.
+EVIDENCE_PACKET_PROMPT = """Answer one memory-benchmark question from a frozen SoMem snapshot.
 
 No retrieval tools are available or needed. The Evidence Packet is a static
 presentation of the exact frozen Pipeline candidates; do not search, add
@@ -190,7 +190,7 @@ Output exactly one <answer>...</answer> block and no reasoning.
 """
 
 
-EVIDENCE_GATE_PROMPT = """Answer one memory-benchmark question from a frozen NativeMem snapshot.
+EVIDENCE_GATE_PROMPT = """Answer one memory-benchmark question from a frozen SoMem snapshot.
 
 No retrieval tools are available or needed. The Evidence Packet contains the
 exact frozen Pipeline candidates. The Evidence Gate adds only deterministic

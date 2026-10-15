@@ -458,7 +458,7 @@ def test_validation_diagnostic_aggregation_reaches_repair_only_when_enabled(
 def test_validation_diagnostic_aggregation_does_not_truncate_repair_feedback(
     tmp_path: Path, monkeypatch,
 ):
-    final_finding = "file=core.md line=63 footnote=e-final"
+    final_finding = "file=topics/core.md line=63 footnote=e-final"
     outcomes = iter([
         CommitFailure(
             ValueError("duplicate footnote definitions (repair all): id=e1"),
@@ -577,7 +577,7 @@ def test_core_capacity_prompt_exposes_other_preflight_findings_when_enabled(
             (
                 "Core: Core Memory exceeds 2000 tokens: 2158",
                 "Core: undefined Core footnotes (repair all): "
-                "id=e1 file=core.md lines=[3]",
+                "id=e1 file=topics/core.md lines=[3]",
                 "Topic format: memory source footnotes required (repair all): "
                 "block=abc123 file=a.md line=5",
             ),
@@ -599,7 +599,7 @@ def test_core_capacity_prompt_exposes_other_preflight_findings_when_enabled(
     )
 
     prompt = agent.calls[1]["prompt"]
-    assert "id=e1 file=core.md lines=[3]" in prompt
+    assert "id=e1 file=topics/core.md lines=[3]" in prompt
     assert "block=abc123 file=a.md line=5" in prompt
     assert "passed the ordinary memory checks" not in prompt
     assert "capacity-only" in prompt
@@ -647,7 +647,7 @@ def test_core_capacity_repair_is_conditional_and_uses_exact_count_tool(
         "trigger_token_count": 2_158,
         "hard_limit": 2_000,
         "target": 1_800,
-        "checks": [0],
+        "checks": [3],
         "stagnated": False,
         "status": "ok",
         "error": None,
@@ -740,7 +740,8 @@ def test_luna_topic_routing_guidance_resolves_core_ambiguity():
 
 
 def test_luna_validates_core_sources_before_capacity(tmp_path: Path):
-    (tmp_path / "core.md").write_text(
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text(
         ("Unsupported persistent fact. " * 100) + "[^e1]\n",
         encoding="utf-8",
     )
@@ -757,13 +758,14 @@ def test_luna_validates_core_sources_before_capacity(tmp_path: Path):
 
 
 def test_core_reports_all_undefined_footnotes_with_lines(tmp_path: Path):
-    (tmp_path / "core.md").write_text(
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text(
         "First unsupported fact.[^a]\nSecond unsupported fact.[^b]\n",
         encoding="utf-8",
     )
     workspace = memory.MemoryWorkspace(tmp_path)
     with pytest.raises(ValueError, match="undefined Core footnotes") as exc:
-        workspace._validate_core_sources(workspace.stage_dir / "core.md")
+        workspace._validate_core_sources(workspace.stage_dir / "topics/core.md")
     assert "id=a file=core.md lines=[1]" in str(exc.value)
     assert "id=b file=core.md lines=[2]" in str(exc.value)
 
@@ -801,7 +803,7 @@ def test_source_append_only_error_names_changed_file(tmp_path: Path):
             "duplicate_memory_ids", "EVERY listed ID",
         ),
         (
-            "unused Core footnotes (repair all): id=e3 file=core.md line=5",
+            "unused Core footnotes (repair all): id=e3 file=topics/core.md line=5",
             "unused_core_footnotes", "EVERY listed unused Core definition",
         ),
     ],
@@ -814,14 +816,15 @@ def test_aggregated_diagnostics_keep_matching_repair_modes(message, mode, guidan
 def test_aggregated_core_missing_uses_strict_repair_guidance():
     mode, guidance = _luna_strict_validation_guidance(
         "undefined Core footnotes (repair all): "
-        "id=e1 file=core.md lines=[2] | id=e2 file=core.md lines=[4]"
+        "id=e1 file=topics/core.md lines=[2] | id=e2 file=topics/core.md lines=[4]"
     )
     assert mode == "undefined_core_footnotes"
     assert "EVERY listed citation" in guidance
 
 
 def test_default_keeps_capacity_check_before_core_sources(tmp_path: Path):
-    (tmp_path / "core.md").write_text(
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text(
         ("Unsupported persistent fact. " * 100) + "[^e1]\n",
         encoding="utf-8",
     )
@@ -835,7 +838,8 @@ def test_default_keeps_capacity_check_before_core_sources(tmp_path: Path):
 
 
 def test_disabled_core_capacity_limit_keeps_core_source_validation(tmp_path: Path):
-    (tmp_path / "core.md").write_text(
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text(
         ("Unsupported persistent fact. " * 100) + "[^e1]\n",
         encoding="utf-8",
     )
@@ -858,7 +862,8 @@ def test_disabled_core_capacity_limit_accepts_oversized_valid_core(tmp_path: Pat
     (tmp_path / "sources" / "D1.md").write_text(
         '<a id="d1-1"></a>\n', encoding="utf-8",
     )
-    (tmp_path / "core.md").write_text(
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text(
         ("A stable preference " * 100)
         + ".[^e1]\n\n[^e1]: Time: `undated`; Sources: [D1:1](sources/D1.md#d1-1)\n",
         encoding="utf-8",
@@ -1088,7 +1093,7 @@ def test_core_token_tool_enforces_check_and_stagnation_limits(tmp_path: Path):
     assert first["is_error"] is False
     assert second["is_error"] is False
     assert third["is_error"] is False
-    assert state.checks == [0, 0, 0]
+    assert state.checks == [3, 3, 3]
     assert state.stagnated is True
     assert exhausted["is_error"] is True
     assert audit[-1]["status"] == "error"
@@ -1139,7 +1144,7 @@ def test_memory_workspace_runs_normal_shell_commands_from_memory_dir(tmp_path: P
     )
 
     assert result.returncode == 0
-    assert result.stdout.strip() == "topics/aquarium/tanks.md"
+    assert set(result.stdout.splitlines()) == {"topics/core.md", "topics/aquarium/tanks.md"}
     assert "###### Acquisition history" in (
         workspace.stage_dir / "topics/aquarium/tanks.md"
     ).read_text()
@@ -1172,7 +1177,7 @@ def test_read_only_shell_accepts_uncommitted_builtin_topic_edits(tmp_path: Path)
     result = workspace.shell("ls topics")
 
     assert result.returncode == 0
-    assert result.stdout.strip() == "a.md"
+    assert set(result.stdout.splitlines()) == {"a.md", "core.md"}
     assert "Sources: D1:1" in topic.read_text(encoding="utf-8")
     assert not (tmp_path / "topics/a.md").exists()
 
@@ -1610,6 +1615,7 @@ def test_workspace_structure_lists_all_shell_visible_memory_views(tmp_path):
         "recent_events.jsonl",
         "sources/D1.md",
         "timeline/2026.md",
+        "topics/core.md",
         "topics/home.md",
     ]
 
@@ -1732,10 +1738,10 @@ def test_recent_memory_keeps_only_the_latest_fifty_events_by_default(tmp_path: P
 def test_shell_core_memory_changes_persist(tmp_path: Path):
     workspace = MemoryWorkspace(tmp_path)
 
-    result = workspace.shell("printf '%s\\n' '# Core Memory' 'Stable preference' > core.md")
+    result = workspace.shell("printf '%s\\n' '# Core Memory' 'Stable preference' > topics/core.md")
 
     assert result.returncode == 0
-    assert (tmp_path / "core.md").read_text() == (
+    assert (tmp_path / "topics/core.md").read_text() == (
         "# Core Memory\nStable preference\n"
     )
 
@@ -1749,7 +1755,7 @@ def test_shell_normalizes_and_validates_core_source_references(tmp_path: Path):
     }])
 
     workspace.shell(
-        "cat > core.md <<'EOF'\n"
+        "cat > topics/core.md <<'EOF'\n"
         "# Core Memory\n\n"
         "My stable preference is jasmine tea.[^new-evidence-tea] "
         "^new-block-tea\n\n"
@@ -1758,7 +1764,7 @@ def test_shell_normalizes_and_validates_core_source_references(tmp_path: Path):
         "EOF"
     )
 
-    text = (tmp_path / "core.md").read_text(encoding="utf-8")
+    text = (tmp_path / "topics/core.md").read_text(encoding="utf-8")
     assert "new-evidence" not in text
     assert "new-block" not in text
     assert re.search(r"\^[0-9a-f]{8}$", text, re.MULTILINE)
@@ -1772,7 +1778,7 @@ def test_shell_rejects_missing_core_source_reference(tmp_path: Path):
 
     with pytest.raises(ValueError, match="missing source reference"):
         workspace.shell(
-            "cat > core.md <<'EOF'\n"
+            "cat > topics/core.md <<'EOF'\n"
             "# Core Memory\n\n"
             "Unsupported claim.[^new-evidence-claim] ^new-block-claim\n\n"
             "[^new-evidence-claim]: Time: `undated`; Sources: "
@@ -1780,7 +1786,7 @@ def test_shell_rejects_missing_core_source_reference(tmp_path: Path):
             "EOF"
         )
 
-    assert not (tmp_path / "core.md").exists()
+    assert (tmp_path / "topics/core.md").read_text() == "# Core\n"
 
 
 def test_source_validation_aggregates_all_missing_handles(tmp_path: Path):
@@ -1886,9 +1892,9 @@ def test_core_memory_rejects_content_over_token_limit(tmp_path: Path):
     )
 
     with pytest.raises(ValueError, match="Core Memory exceeds"):
-        workspace.shell("printf '%s\\n' 'alpha beta' > core.md")
+        workspace.shell("printf '%s\\n' 'alpha beta' > topics/core.md")
 
-    assert not (tmp_path / "core.md").exists()
+    assert (tmp_path / "topics/core.md").read_text() == "# Core\n"
 
 
 def test_core_capacity_rejection_preserves_stage_for_incremental_repair(
@@ -1904,7 +1910,7 @@ def test_core_capacity_rejection_preserves_stage_for_incremental_repair(
     }])
     workspace._refresh_stage()
     baseline = workspace.baseline()
-    core = workspace.stage_dir / "core.md"
+    core = workspace.stage_dir / "topics/core.md"
     core.write_text(
         "# Core Memory\n\n"
         + "A stable preference " * 40
@@ -1929,21 +1935,22 @@ def test_core_capacity_rejection_preserves_stage_for_incremental_repair(
     core.write_text(shortened, encoding="utf-8")
     workspace.commit_edits(*baseline)
 
-    assert (tmp_path / "core.md").is_file()
+    assert (tmp_path / "topics/core.md").is_file()
     assert not workspace.stage_is_dirty()
 
 
 def test_core_memory_restores_previous_content_when_commit_fails(
     tmp_path: Path, monkeypatch
 ):
-    (tmp_path / "core.md").write_text("old core\n", encoding="utf-8")
+    (tmp_path / "topics").mkdir(exist_ok=True)
+    (tmp_path / "topics/core.md").write_text("old core\n", encoding="utf-8")
     workspace = MemoryWorkspace(tmp_path)
     original_replace = os.replace
 
     def fail_core_install(source, destination):
         if (
-            Path(source) == workspace.stage_dir / "core.md"
-            and Path(destination) == tmp_path / "core.md"
+            Path(source) == workspace.stage_dir / "topics"
+            and Path(destination) == tmp_path / "topics"
         ):
             raise OSError("injected core install failure")
         return original_replace(source, destination)
@@ -1954,9 +1961,9 @@ def test_core_memory_restores_previous_content_when_commit_fails(
     )
 
     with pytest.raises(OSError, match="injected core install failure"):
-        workspace.shell("printf '%s\\n' 'new core' > core.md")
+        workspace.shell("printf '%s\\n' 'new core' > topics/core.md")
 
-    assert (tmp_path / "core.md").read_text() == "old core\n"
+    assert (tmp_path / "topics/core.md").read_text() == "old core\n"
 
 
 def test_recent_memory_rejects_negative_capacity():

@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 from urllib.parse import unquote
 
@@ -52,6 +54,10 @@ class MemoryWorkspace(
     ):
         self.memory_dir = Path(memory_dir).resolve()
         self.memory_dir.mkdir(parents=True, exist_ok=True)
+        selected_core = core_file(self.memory_dir)
+        if not selected_core.exists():
+            selected_core.parent.mkdir(parents=True, exist_ok=True)
+            selected_core.write_text("# Core\n", encoding="utf-8")
         backup = self.memory_dir / f"{runtime_dir(self.memory_dir).name}-block-backup"
         if backup.exists():
             raise RuntimeError(f"Unresolved installation backup requires recovery: {backup}")
@@ -112,8 +118,8 @@ class MemoryWorkspace(
         relations = self.memory_dir / "relations.json"
         if relations.exists():
             shutil.copy2(relations, self.stage_dir / relations.name)
-        core = self.memory_dir / "core.md"
-        if core.exists():
+        core = core_file(self.memory_dir)
+        if core.exists() and core.parent == self.memory_dir:
             shutil.copy2(core, self.stage_dir / core.name)
         runtime = runtime_dir(self.memory_dir) / "runtime.json"
         staged_runtime = self.stage_dir / runtime.parent.name / "runtime.json"
@@ -178,7 +184,7 @@ class MemoryWorkspace(
         else:
             units = parse_topic_tree(self.stage_dir / "topics")
         block_ids = {unit.memory_id for unit in units if unit.memory_id}
-        core = self.stage_dir / "core.md"
+        core = core_file(self.stage_dir)
         if core.is_file():
             block_ids.update(re.findall(
                 r"(?m)\^([A-Za-z0-9-]+)\s*$",
@@ -252,8 +258,8 @@ class MemoryWorkspace(
                     + "; ".join(f"sources/{path}" for path in changed)
                 )
             if not self.core_edits_allowed:
-                staged_core = self.stage_dir / "core.md"
-                committed_core = self.memory_dir / "core.md"
+                staged_core = core_file(self.stage_dir)
+                committed_core = core_file(self.memory_dir)
                 staged_bytes = (
                     staged_core.read_bytes() if staged_core.is_file() else None
                 )
@@ -324,9 +330,9 @@ class MemoryWorkspace(
                 "Sources: Source Memory is append-only; changed files (repair all): "
                 + "; ".join(f"sources/{path}" for path in changed_sources)
             )
-        core = self.stage_dir / "core.md"
+        core = core_file(self.stage_dir)
         if not self.core_edits_allowed:
-            committed_core = self.memory_dir / "core.md"
+            committed_core = core_file(self.memory_dir)
             if (core.read_bytes() if core.is_file() else None) != (
                 committed_core.read_bytes() if committed_core.is_file() else None
             ):
@@ -428,7 +434,7 @@ class MemoryWorkspace(
         findings: list[str] = []
         before = {unit.memory_id: unit for unit in before_units}
         surviving = {unit.memory_id for unit in units if unit.memory_id is not None}
-        core = self.stage_dir / "core.md"
+        core = core_file(self.stage_dir)
         if core.is_file():
             surviving.update(re.findall(
                 r"(?m)\^([A-Za-z0-9-]+)\s*$",

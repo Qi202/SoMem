@@ -4,6 +4,8 @@ import hashlib
 import os
 import re
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 from urllib.parse import unquote
 
@@ -40,7 +42,7 @@ class TopicNormalizationMixin:
             path.relative_to(root).as_posix(): hashlib.sha256(
                 path.read_bytes()
             ).hexdigest()
-            for path in root.rglob("*.md")
+            for path in root.rglob("*.md") if path != root / "core.md"
         }
 
     @staticmethod
@@ -111,8 +113,8 @@ class TopicNormalizationMixin:
         topics = self.stage_dir / "topics"
         if not topics.exists():
             return
-        paths = sorted(topics.rglob("*.md"))
-        core = self.stage_dir / "core.md"
+        core = core_file(self.stage_dir)
+        paths = [p for p in sorted(topics.rglob("*.md")) if p != core]
         if core.is_file():
             paths.append(core)
         texts = {path: path.read_text(encoding="utf-8") for path in paths}
@@ -125,7 +127,7 @@ class TopicNormalizationMixin:
         invalid_refs: dict[str, list[str]] = {}
         for path, text in texts.items():
             relative = (
-                "core.md" if path == core
+                core.relative_to(self.stage_dir).as_posix() if path == core
                 else (Path("topics") / path.relative_to(topics)).as_posix()
             )
             for line_number, line in enumerate(text.splitlines(), 1):
@@ -161,7 +163,7 @@ class TopicNormalizationMixin:
         for path, text in list(texts.items()):
             local_ids: dict[str, list[str]] = {}
             path_key = (
-                "core.md"
+                core.relative_to(self.stage_dir).as_posix()
                 if path == core
                 else (Path("topics") / path.relative_to(topics)).as_posix()
             )
@@ -279,7 +281,7 @@ class TopicNormalizationMixin:
         # within it, so a caller can tell which paragraph got which ID.
         self.last_block_id_map = {
             "{}#{}".format(
-                "core.md"
+                core.relative_to(self.stage_dir).as_posix()
                 if path == core
                 else (Path("topics") / path.relative_to(topics)).as_posix(),
                 index,
@@ -301,7 +303,7 @@ class TopicNormalizationMixin:
                 text = "\n".join(lines)
             rendered = []
             topic_path = (
-                Path("core.md")
+                core.relative_to(self.stage_dir)
                 if path == core
                 else Path("topics") / path.relative_to(topics)
             )
@@ -362,7 +364,7 @@ class TopicNormalizationMixin:
         units = parse_topic_tree(self.stage_dir / "topics")
         if before_block_ids:
             surviving = {unit.memory_id for unit in units}
-            core = self.stage_dir / "core.md"
+            core = core_file(self.stage_dir)
             if core.is_file():
                 surviving.update(re.findall(
                     r"(?m)\^([A-Za-z0-9-]+)\s*$",

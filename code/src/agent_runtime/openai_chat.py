@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 from openai import OpenAI, RateLimitError
 
 from .claude_code import AgentExecutionError, AgentResult
@@ -61,7 +62,15 @@ class OpenAIChatConfig:
                 raise ValueError("OpenRouter reasoning controls conflict with other controls")
 
 
+def _tool_error_result(message: str) -> dict[str, Any]:
+    # Match the CC SDK's tool-error contract without depending on its private API.
+    return {"content": [{"type": "text", "text": message}], "is_error": True}
+
+
 def _tool_result_text(result: dict[str, Any]) -> str:
+    # Chat Completions has no MCP isError field; carry it in the tool message.
+    if result.get("is_error"):
+        return json.dumps(result, ensure_ascii=False)
     text = "\n".join(
         str(part.get("text", "")) for part in result.get("content", [])
         if part.get("type") == "text"
@@ -93,8 +102,17 @@ class OpenAIChatAgent:
         } for item in tools]
 
     @staticmethod
-    def _run_tool(definition: Any, arguments: dict[str, Any]) -> dict[str, Any]:
-        return asyncio.run(definition.handler(arguments))
+    def _run_tool(definition: Any, arguments: Any) -> dict[str, Any]:
+        # Reuse the CC SDK's validate-before-handler and error-feedback semantics.
+        # Do not coerce values or retry a handler: it may already have side effects.
+        try:
+            try:
+                jsonschema.validate(instance=arguments, schema=definition.input_schema)
+            except jsonschema.ValidationError as exc:
+                return _tool_error_result(f"Input validation error: {exc.message}")
+            return asyncio.run(definition.handler(arguments))
+        except Exception as exc:
+            return _tool_error_result(str(exc))
 
     def run(
         self,
@@ -308,22 +326,24 @@ class OpenAIChatAgent:
                 if not tool_calls:
                     break
                 for call in tool_calls:
-                    arguments = json.loads(call.function.arguments or "{}")
                     definition = by_name.get(call.function.name)
                     if definition is None:
-                        result = {
-                            "content": [{"type": "text", "text": json.dumps({
-                                "error": f"unknown tool: {call.function.name}"
-                            })}],
-                            "is_error": True,
-                        }
+                        result = _tool_error_result(f"Tool '{call.function.name}' not found")
                     else:
-                        result = self._run_tool(definition, arguments)
+                        try:
+                            arguments = json.loads(call.function.arguments)
+                        except (json.JSONDecodeError, TypeError) as exc:
+                            result = _tool_error_result(f"Input validation error: invalid JSON: {exc}")
+                        else:
+                            result = self._run_tool(definition, arguments)
+                    content = _tool_result_text(result)
+                    if result.get("is_error"):
+                        content = content.replace(self.config.api_key, "[redacted]")
                     messages.append({
                         "role": "tool",
                         "tool_call_id": call.id,
                         "name": call.function.name,
-                        "content": _tool_result_text(result),
+                        "content": content,
                     })
             else:
                 raise AgentExecutionError(f"agent exceeded max_turns={max_turns}")

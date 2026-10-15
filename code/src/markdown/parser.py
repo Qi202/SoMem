@@ -31,6 +31,8 @@ def _malformed_footnote_definitions(topics: Path) -> list[str]:
     """List every definition-looking line that violates the Topic contract."""
     malformed = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         relative = path.relative_to(topics).as_posix()
         for line_number, line in enumerate(
             path.read_text(encoding="utf-8").splitlines(), start=1
@@ -44,6 +46,8 @@ def _malformed_footnote_definitions(topics: Path) -> list[str]:
 def _duplicate_footnote_definitions(topics: Path) -> list[str]:
     duplicates = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         locations: dict[str, list[int]] = {}
         for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             if match := definition_match(line):
@@ -69,6 +73,8 @@ def _trailing_content_errors(topics: Path) -> list[str]:
     """Find every block paragraph with prose or placeholders after its last citation."""
     errors = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         relative = path.relative_to(topics).as_posix()
         for paragraph, _headings, line_number in paragraphs(
             path.read_text(encoding="utf-8").splitlines(), with_line_numbers=True,
@@ -94,6 +100,8 @@ def _undefined_footnote_citations(topics: Path) -> list[str]:
     """Enumerate missing Topic definitions without mutating or parsing the tree."""
     missing = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         lines = path.read_text(encoding="utf-8").splitlines()
         defined = {
             match.group("id")
@@ -138,6 +146,8 @@ def _independent_topic_errors(topics: Path, *, normalized: bool = True) -> dict[
     }
     seen_ids: dict[str, str] = {}
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         lines = path.read_text(encoding="utf-8").splitlines()
         relative = path.relative_to(topics).as_posix()
         defined: dict[str, int] = {}
@@ -273,6 +283,8 @@ def scan_topic_contract(topics: Path) -> list[TopicDiagnosticUnit]:
     """
     result: list[TopicDiagnosticUnit] = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         relative = path.relative_to(topics).as_posix()
         lines = path.read_text(encoding="utf-8").splitlines()
         known: dict = {}
@@ -504,6 +516,8 @@ def parse_topic_tree(topics: Path, *, strict: bool = True) -> list[MemoryUnit]:
     duplicate_ids: list[str] = []
     unused_definitions: list[str] = []
     for path in sorted(topics.rglob("*.md")):
+        if path == topics / "core.md":
+            continue
         lines = path.read_text(encoding="utf-8").splitlines()
         known_definitions = definitions(
             lines, source_path=path.relative_to(topics).as_posix()
@@ -588,6 +602,8 @@ def topic_prose(topics: Path) -> str:
     """Return normalized non-structural Topic prose, including unbound text."""
     values = []
     for path in sorted(Path(topics).rglob("*.md")):
+        if path == Path(topics) / "core.md":
+            continue
         lines = path.read_text(encoding="utf-8").splitlines()
         for paragraph, _headings in paragraphs(lines):
             value = SINGLE_CITATION.sub("", paragraph)

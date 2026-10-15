@@ -16,6 +16,8 @@ import re
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..markdown import parse_topic_tree
@@ -296,7 +298,7 @@ def committed_baseline(workspace: Any) -> tuple[list[Any], set[str]]:
     else:
         units = parse_topic_tree(workspace.memory_dir / "topics")
     block_ids = {unit.memory_id for unit in units if unit.memory_id}
-    core = workspace.memory_dir / "core.md"
+    core = core_file(workspace.memory_dir)
     if core.is_file():
         block_ids.update(re.findall(
             r"(?m)\^([A-Za-z0-9-]+)\s*$",

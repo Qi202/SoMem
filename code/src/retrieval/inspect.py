@@ -12,6 +12,8 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..management.transaction import TransactionError, workspace_revision
@@ -109,7 +111,7 @@ def status(memory_dir: Path, *, embedding_available: bool = False) -> dict[str, 
         ),
         "recent_events": recent_count,
         "relations": relation_count,
-        "core_exists": (root / "core.md").is_file(),
+        "core_exists": (core_file(root)).is_file(),
         "embedding_available": embedding_available,
     }
 

@@ -1,6 +1,7 @@
 anthropic>=0.40,<1
 claude-agent-sdk==0.1.81
 httpx[socks]>=0.27,<1
+jsonschema>=4,<5
 mcp>=1.23,<2
 numpy>=2,<3
 openai>=1.50,<3

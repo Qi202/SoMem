@@ -1,6 +1,8 @@
 """Initial context rendered for one retrieval trajectory."""
 
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..runtime.tokenization import TokenCounter
@@ -17,7 +19,7 @@ def initialize_context(
     model: str,
     prompt_template: str = RETRIEVAL_PROMPT,
 ) -> tuple[str, list[dict[str, Any]], list[dict[str, str]], int]:
-    core_path = memory_dir / "core.md"
+    core_path = core_file(memory_dir)
     recent_path = memory_dir / "recent_events.jsonl"
     core = core_path.read_text(encoding="utf-8") if core_path in files else ""
     recent = (

@@ -73,7 +73,7 @@ def ensure_workspace(root: Path, *, self_ignore: bool = False) -> bool:
         return False
     (root / "topics").mkdir(exist_ok=True)
     (root / "sources").mkdir(exist_ok=True)
-    core = root / "core.md"
+    core = root / "topics" / "core.md"
     if not core.exists():
         core.write_text("# Core\n", encoding="utf-8")
     runtime = root / RUNTIME_DIR

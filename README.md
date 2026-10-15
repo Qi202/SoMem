@@ -1,6 +1,6 @@
 # SoMem: Self-Organized Document Memory
 
-Anonymous framework code for a persistent, document-based agent memory.
+Framework code for a persistent, document-based agent memory.
 
 ## Framework
 
@@ -27,16 +27,18 @@ The same model can perform both roles, or separate models can share the workspac
 memory/
   sources/             immutable conversation records
   topics/              editable semantic documents with source references
-  core.md              bounded context
+    core.md            bounded context
   recent_events.jsonl  recent event view
   timeline/            temporal access views
   relations/           relation access views
-  .somem/            local implementation state
+  .somem/              local implementation state
 ```
 
 Derived views are access structures. Their content is rebuilt from accepted memory documents rather than supplied as an independent source of facts. Search tools return evidence for the Reader; they do not judge answers.
 
 ## Scope
+
+This snapshot was synchronized with the working framework on 2026-10-15. New workspaces keep Core in `topics/core.md`; existing workspaces with root-level `core.md` remain supported.
 
 This repository contains framework implementation and selected offline tests. It does not contain benchmark data, experimental launchers, run configurations, evaluation/Judge protocols, experimental results, or paper files. Internal agent instructions remain part of the implementation; they are not a benchmark execution recipe.
 

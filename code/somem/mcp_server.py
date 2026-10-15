@@ -216,7 +216,7 @@ def build_server(
         description=(
             "Commit new evidence and a topic edit as one transaction. "
             "base_revision comes from memory_status or any read. patch is a "
-            "unified diff touching only topics/**/*.md and core.md. Cite new "
+            "unified diff touching only topics/**/*.md and topics/core.md. Cite new "
             "sources by their transaction-local label (new-source-<name>) in "
             "the footnote Sources: field; new blocks use ^new-block-<name>. "
             "The runtime assigns stable IDs and rebuilds derived views."

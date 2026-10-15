@@ -6,6 +6,8 @@ import asyncio
 import json
 import re
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..runtime.tokenization import TokenCounter
@@ -116,7 +118,7 @@ def collect_answer(
             files=files,
             max_entries=config.evidence_ledger_max_entries,
         )
-        core_path = memory_dir / "core.md"
+        core_path = core_file(memory_dir)
         recent_path = memory_dir / "recent_events.jsonl"
         core = core_path.read_text(encoding="utf-8") if core_path in files else ""
         recent = (
@@ -239,7 +241,7 @@ def collect_answer(
                 packet_metrics=pipeline_metrics["evidence_packet"],
             )
             pipeline_metrics["evidence_gate"] = gate_metrics
-        core_path = memory_dir / "core.md"
+        core_path = core_file(memory_dir)
         recent_path = memory_dir / "recent_events.jsonl"
         prompt_template = (
             EVIDENCE_GATE_PROMPT if config.pipeline_evidence_gate_enabled

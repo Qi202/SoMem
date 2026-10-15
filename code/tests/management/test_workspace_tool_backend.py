@@ -153,7 +153,7 @@ def test_validation_diagnostics_are_opt_in_and_preserve_primary_error(tmp_path: 
             config=MemoryConfig(validation_diagnostic_aggregation_enabled=enabled),
         )
         baseline = workspace.baseline()
-        (workspace.stage_dir / "core.md").write_text(
+        (workspace.stage_dir / "topics/core.md").write_text(
             "Fact.[^absent]\n", encoding="utf-8"
         )
         (workspace.stage_dir / "topics" / "bad.md").write_text(
@@ -166,7 +166,7 @@ def test_validation_diagnostics_are_opt_in_and_preserve_primary_error(tmp_path: 
             assert any("Topic format:" in item for item in workspace.last_validation_diagnostics)
         else:
             assert workspace.last_validation_diagnostics == ()
-        assert not (workspace.stage_dir / "core.md").exists()
+        assert (workspace.stage_dir / "topics/core.md").read_text() == "# Core\n"
 
 
 def test_validation_diagnostics_report_topic_duplicate_and_core_source_together(
@@ -179,9 +179,9 @@ def test_validation_diagnostics_report_topic_duplicate_and_core_source_together(
         config=MemoryConfig(validation_diagnostic_aggregation_enabled=True),
     )
     baseline = workspace.baseline()
-    (workspace.stage_dir / "core.md").write_text(
+    (workspace.stage_dir / "topics/core.md").write_text(
         "Fact.[^c]\n[^c]: Time: `undated`; Sources: "
-        "[locomo/thread_x/msg_missing](sources/x.md#msg_missing)\n",
+        "[locomo/thread_x/msg_missing](../sources/x.md#msg_missing)\n",
         encoding="utf-8",
     )
     (workspace.stage_dir / "topics" / "bad.md").write_text(
@@ -195,10 +195,10 @@ def test_validation_diagnostics_report_topic_duplicate_and_core_source_together(
     findings = "\n".join(workspace.last_validation_diagnostics)
     assert "duplicate footnote definitions (repair all)" in findings
     assert "missing source references (repair all)" in findings
-    assert "file=core.md line=2 footnote=c" in findings
+    assert "file=topics/core.md line=2 footnote=c" in findings
     assert "file=topics/bad.md line=4 footnote=e" in findings
     assert "not checked because Topic parsing failed" not in findings
-    assert not (workspace.stage_dir / "core.md").exists()
+    assert (workspace.stage_dir / "topics/core.md").read_text() == "# Core\n"
 
 
 def test_validation_diagnostics_include_every_uncited_topic_block(tmp_path: Path):
@@ -252,10 +252,10 @@ def test_validation_diagnostics_scan_core_sources_and_topics_together(tmp_path: 
     (workspace.stage_dir / "sources" / "D1.md").write_text(
         '<a id="d1-1"></a>\n', encoding="utf-8",
     )
-    (workspace.stage_dir / "core.md").write_text(
+    (workspace.stage_dir / "topics/core.md").write_text(
         "First.[^missing] Second.[^ok]\n\n"
-        "[^ok]: Time: `2026-02-30`; Sources: [D1:2](sources/D1.md#d1-2)\n"
-        "[^ok]: Time: `undated`; Sources: [D1:1](sources/D1.md#d1-1)\n"
+        "[^ok]: Time: `2026-02-30`; Sources: [D1:2](../sources/D1.md#d1-2)\n"
+        "[^ok]: Time: `undated`; Sources: [D1:1](../sources/D1.md#d1-1)\n"
         "[^no-link]: Time: `undated`; Sources: D1:3\n"
         "[^broken]: Sources: D1:4\n",
         encoding="utf-8",
@@ -385,7 +385,7 @@ def test_capacity_rejection_also_records_independent_diagnostics(tmp_path: Path)
         ),
     )
     baseline = workspace.baseline()
-    (workspace.stage_dir / "core.md").write_text(
+    (workspace.stage_dir / "topics/core.md").write_text(
         "Unsupported fact.[^missing]\n", encoding="utf-8",
     )
 

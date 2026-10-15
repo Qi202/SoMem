@@ -6,6 +6,8 @@ import re
 import json
 from pathlib import Path
 
+from ..workspace_layout import core_file
+
 
 SOURCE_ID_RE = re.compile(r"source-id:([^\s]+)")
 HANDLE_RE = re.compile(r"locomo/thread_[0-9a-f]+/msg_[0-9a-f]+")
@@ -94,8 +96,8 @@ def source_repair_context(workspace: Path, error: str) -> str:
                 "source_excerpt": body[:1800],
             })
     authored = sorted((workspace / "topics").rglob("*.md"))
-    if (workspace / "core.md").is_file():
-        authored.append(workspace / "core.md")
+    if (core_file(workspace)).is_file():
+        authored = sorted(set([*authored, core_file(workspace)]))
     occurrences = {handle: [] for handle in invalid}
     for path in authored:
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
@@ -146,9 +148,9 @@ def canonicalize_workspace(workspace: Path) -> dict[str, object]:
         by_thread.setdefault(thread, []).append(handle)
 
     authored = list((workspace / "topics").rglob("*.md"))
-    core = workspace / "core.md"
+    core = core_file(workspace)
     if core.is_file():
-        authored.append(core)
+        authored = sorted(set([*authored, core]))
     corrections: list[dict[str, str | int]] = []
     unresolved: list[dict[str, object]] = []
     for path in authored:

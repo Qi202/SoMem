@@ -6,6 +6,8 @@ import json
 import re
 import shutil
 from pathlib import Path
+
+from ..workspace_layout import core_file
 from typing import Any
 
 from ..markdown.syntax import definition_match
@@ -43,7 +45,7 @@ class WorkspaceToolBackend:
         except ValueError as exc:
             raise WorkspaceToolError("path escapes the workspace") from exc
         if writable and not (
-            relative == "core.md" or relative.startswith("topics/")
+            (relative == "core.md" and core_file(self.root) == self.root / "core.md") or relative.startswith("topics/")
         ):
             raise WorkspaceToolError(
                 "writes are allowed only in core.md and topics/. Timeline and other "
@@ -117,7 +119,7 @@ class WorkspaceToolBackend:
                                   updated, re.MULTILINE))
         missing = ids - retained
         if missing:
-            for other in [self.root / "core.md", *(self.root / "topics").rglob("*.md")]:
+            for other in [core_file(self.root), *(self.root / "topics").rglob("*.md")]:
                 if not other.is_file() or other.resolve() == target:
                     continue
                 missing -= set(re.findall(r"(?<!\S)\^([0-9a-f]{8})(?=\s|$)",

@@ -2,6 +2,8 @@
 import hashlib
 import json
 from pathlib import Path
+
+from ..workspace_layout import core_file
 import shutil
 import tempfile
 from dataclasses import dataclass
@@ -53,7 +55,7 @@ def unresolved_mutations(audit):
 def candidate_digest(workspace):
     digest = hashlib.sha256()
     root = workspace.stage_dir
-    for path in [root / 'core.md', *sorted((root / 'topics').rglob('*.md'))]:
+    for path in [core_file(root), *sorted((root / 'topics').rglob('*.md'))]:
         if path.is_file():
             digest.update(str(path.relative_to(root)).encode())
             digest.update(path.read_bytes())
