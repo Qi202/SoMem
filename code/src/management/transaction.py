@@ -27,7 +27,7 @@ from ..workspace_layout import is_internal_path, is_state_file, runtime_dir
 WRITABLE_PREFIX = "topics/"
 WRITABLE_FILES = {"core.md"}
 SOURCE_LABEL_PATTERN = re.compile(r"new-source-[a-z0-9-]+")
-SOURCE_PROVIDER = "claude-code"
+SOURCE_PROVIDER = "somem"
 VALID_ROLES = ("user", "assistant", "system", "tool")
 
 

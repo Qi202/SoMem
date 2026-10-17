@@ -2,6 +2,12 @@
 
 Framework code for a persistent, document-based agent memory.
 
+## Coding-agent plugin
+
+SoMem can share project decisions and personal preferences between Claude Code and Codex through the same MCP service. Native plugin manifests and four shared Skills provide setup, recall, remember, and status workflows. See [plugin installation and usage](docs/plugins.md).
+
+The plugin uses the connected host model and a lightweight default dependency set. Standalone model adapters and embeddings are optional extras; `requirements.txt` retains the full framework environment. This initial plugin does not enable automatic transcript capture or background memory writing.
+
 ## Framework
 
 SoMem separates immutable conversation records, editable semantic documents, and bounded context supplied before search. A Writer organizes and revises Markdown documents with stable references to source evidence. Deterministic validation checks document structure and references before accepted edits rebuild the access views. A Reader decides which documents to search and read, including returning to original records when necessary.

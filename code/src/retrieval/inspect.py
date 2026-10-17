@@ -19,6 +19,7 @@ from typing import Any
 from ..management.transaction import TransactionError, workspace_revision
 from ..workspace_layout import is_internal_path
 from ..markdown import parse_topic_tree
+from .bm25 import MemoryBM25Index
 
 DERIVED_DIRS = ("timeline",)
 DERIVED_FILES = ("recent_events.jsonl", "relations.json")
@@ -320,8 +321,6 @@ def search(
         return {"method": "embedding", "results": _embedding_search(
             root, query, capped, path_prefix, date_from, date_to
         )}
-    from .bm25 import MemoryBM25Index
-
     index = MemoryBM25Index(root, persist=False)
     hits = index.search(
         query,

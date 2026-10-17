@@ -1,0 +1,15 @@
+{
+  "name": "somem",
+  "interface": {
+    "displayName": "SoMem"
+  },
+  "plugins": [
+    {
+      "name": "somem",
+      "source": {
+        "source": "local",
+        "path": "./"
+      }
+    }
+  ]
+}

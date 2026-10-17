@@ -18,9 +18,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.management import MemoryWorkspace
 from src.management.transaction import TransactionError
-from src.retrieval.layers import Layer, LayeredMemory
+from src.retrieval.layers import Layer
+
+from .workspaces import ProjectWorkspaces
 
 TOOL_NAMES = (
     "memory_status",
@@ -74,11 +75,13 @@ def _as_layers(workspaces: Path | list[tuple[str, Path]]) -> list[Layer]:
 
 
 def build_server(
-    workspaces: Path | list[tuple[str, Path]], *, git_commit: str = "auto"
+    workspaces: Path | list[tuple[str, Path]], *, git_commit: str = "auto",
+    project_workspaces: bool = False,
 ) -> Any:
     from mcp.server.fastmcp import FastMCP
 
-    memory = LayeredMemory(_as_layers(workspaces))
+    resolver = ProjectWorkspaces(_as_layers(workspaces), enabled=project_workspaces)
+    memory = resolver.resolve(None)
     server = FastMCP("somem")
 
     if memory.single:
@@ -96,6 +99,17 @@ def build_server(
             f"in the widest layer; facts about this project in its own."
         )
 
+    if project_workspaces:
+        layer_note += (
+            " Pass the current project's absolute project_root to every tool "
+            "to include its project layer. Omit it only for global-only reads."
+        )
+        update_layer_note += (
+            " Use layer=project with project_root for project facts, or "
+            "layer=global for personal facts. Never infer project_root from "
+            "the plugin installation directory."
+        )
+
     @server.tool(
         name="memory_status",
         description=(
@@ -103,9 +117,16 @@ def build_server(
             "Call this first: memory_update requires the revision." + layer_note
         ),
     )
-    def memory_status() -> str:
+    def memory_status(project_root: str | None = None) -> str:
         def run():
+            memory = resolver.resolve(project_root)
             data = memory.status()
+            if project_workspaces:
+                data["project_selected"] = project_root is not None
+                data["project_root"] = (
+                    str(Path(project_root).expanduser().resolve())
+                    if project_root is not None else None
+                )
             return _ok(data, data["revision"])
         return _guard(run)
 
@@ -121,8 +142,10 @@ def build_server(
         prefix: str = "",
         include_derived: bool = True,
         limit: int = 200,
+        project_root: str | None = None,
     ) -> str:
         def run():
+            memory = resolver.resolve(project_root)
             data = memory.list_files(
                 prefix=prefix,
                 include_derived=include_derived,
@@ -145,8 +168,10 @@ def build_server(
         block_id: str | None = None,
         offset: int = 1,
         limit: int | None = None,
+        project_root: str | None = None,
     ) -> str:
         def run():
+            memory = resolver.resolve(project_root)
             data = memory.read_file(
                 path,
                 heading=heading,
@@ -170,8 +195,10 @@ def build_server(
         case_sensitive: bool = False,
         literal: bool = True,
         limit: int = 50,
+        project_root: str | None = None,
     ) -> str:
         def run():
+            memory = resolver.resolve(project_root)
             data = memory.grep(
                 query,
                 prefix=prefix,
@@ -198,8 +225,10 @@ def build_server(
         path_prefix: str | None = None,
         date_from: str | None = None,
         date_to: str | None = None,
+        project_root: str | None = None,
     ) -> str:
         def run():
+            memory = resolver.resolve(project_root)
             data = memory.search(
                 query,
                 method=method,
@@ -229,8 +258,18 @@ def build_server(
         sources: list[dict[str, Any]] | None = None,
         commit_message: str | None = None,
         layer: str | None = None,
+        project_root: str | None = None,
     ) -> str:
         def run():
+            memory = resolver.resolve(project_root)
+            from src.management import MemoryWorkspace
+
+            if project_workspaces and project_root is None and layer is None:
+                raise TransactionError(
+                    "PROJECT_REQUIRED",
+                    "pass the current project's absolute project_root, "
+                    "or choose layer=global for personal memory",
+                )
             target = memory.resolve(layer) if layer else memory.default
             workspace = MemoryWorkspace(target.root)
             result = workspace.update(
@@ -262,6 +301,9 @@ def build_server(
 
 
 def run(
-    workspaces: Path | list[tuple[str, Path]], *, git_commit: str = "auto"
+    workspaces: Path | list[tuple[str, Path]], *, git_commit: str = "auto",
+    project_workspaces: bool = False,
 ) -> None:
-    build_server(workspaces, git_commit=git_commit).run(transport="stdio")
+    build_server(
+        workspaces, git_commit=git_commit, project_workspaces=project_workspaces,
+    ).run(transport="stdio")

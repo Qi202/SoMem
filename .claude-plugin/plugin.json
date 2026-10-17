@@ -1,0 +1,9 @@
+{
+  "name": "somem",
+  "version": "0.1.0",
+  "description": "Source-backed Markdown memory shared across coding agents.",
+  "author": {
+    "name": "Qi202"
+  },
+  "repository": "https://github.com/Qi202/SoMem"
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "somem": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        ".",
+        "somem",
+        "mcp",
+        "--workspace",
+        "global=~/.somem/memory",
+        "--project-workspaces",
+        "--git-commit",
+        "off"
+      ],
+      "cwd": "./"
+    }
+  }
+}

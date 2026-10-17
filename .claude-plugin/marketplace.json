@@ -1,0 +1,17 @@
+{
+  "name": "somem",
+  "metadata": {
+    "description": "SoMem portable memory plugin for coding agents."
+  },
+  "owner": {
+    "name": "Qi202"
+  },
+  "plugins": [
+    {
+      "name": "somem",
+      "source": "./",
+      "description": "Source-backed Markdown memory shared across coding agents.",
+      "version": "0.1.0"
+    }
+  ]
+}

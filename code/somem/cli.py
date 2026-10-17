@@ -53,6 +53,11 @@ def build_parser() -> argparse.ArgumentParser:
             "on requires git; off never commits"
         ),
     )
+    mcp.add_argument(
+        "--project-workspaces",
+        action="store_true",
+        help="select project memory using each tool call's absolute project_root",
+    )
     return parser
 
 
@@ -201,7 +206,9 @@ def prepare_layers(
     return layers
 
 
-def command_mcp(workspace_values: list[str], git_commit: str) -> int:
+def command_mcp(
+    workspace_values: list[str], git_commit: str, *, project_workspaces: bool = False
+) -> int:
     from .mcp_server import run
 
     try:
@@ -212,7 +219,7 @@ def command_mcp(workspace_values: list[str], git_commit: str) -> int:
     if not layers:
         print("no workspace could be prepared", file=sys.stderr)
         return 2
-    run(layers, git_commit=git_commit)
+    run(layers, git_commit=git_commit, project_workspaces=project_workspaces)
     return 0
 
 
@@ -222,7 +229,10 @@ def main(argv: list[str] | None = None) -> int:
         return command_init(args.workspace)
     if args.command == "validate":
         return command_validate(args.workspace)
-    return command_mcp(list(args.workspace), args.git_commit)
+    return command_mcp(
+        list(args.workspace), args.git_commit,
+        project_workspaces=args.project_workspaces,
+    )
 
 
 if __name__ == "__main__":

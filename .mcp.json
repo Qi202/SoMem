@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "somem": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "${CLAUDE_PLUGIN_ROOT}",
+        "somem",
+        "mcp",
+        "--workspace",
+        "global=~/.somem/memory",
+        "--project-workspaces",
+        "--git-commit",
+        "off"
+      ]
+    }
+  }
+}
