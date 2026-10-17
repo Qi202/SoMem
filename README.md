@@ -8,6 +8,8 @@ SoMem separates immutable conversation records, editable semantic documents, and
 
 The same model can perform both roles, or separate models can share the workspace. The framework includes agent adapters, document operations, lexical and semantic retrieval, workspace validation, and derived views.
 
+Runtime support and remaining adapter limitations are documented in [`docs/agent-runtime-support.md`](docs/agent-runtime-support.md).
+
 ## Code organization
 
 | Directory | Responsibility |

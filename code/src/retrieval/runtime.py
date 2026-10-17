@@ -237,6 +237,7 @@ def create_runtime(
     query_api_key: str | None = None,
     query_model: str | None = None,
     query_cli_path: str | None = None,
+    query_runtime_type: str | None = None,
     workspace_mcp_path: str | None = None,
     agent: Any | None = None,
     query_agent: Any | None = None,
@@ -252,49 +253,56 @@ def create_runtime(
         raise ValueError("base_url is required")
     if not api_key:
         raise ValueError("api_key is required")
-    if agent is None:
-        if runtime_type == "anthropic-messages":
-            agent = AnthropicMessagesAgent(
-                AnthropicMessagesConfig(
-                    base_url=base_url,
-                    api_key=api_key,
-                    model=model,
-                )
-            )
-        elif runtime_type == "openai-chat":
-            agent = OpenAIChatAgent(OpenAIChatConfig(
-                base_url=base_url,
-                api_key=api_key,
-                model=model,
+    def make_agent(
+        selected_type: str,
+        selected_base_url: str,
+        selected_api_key: str,
+        selected_model: str,
+        selected_cli_path: str | None,
+    ) -> Any:
+        if selected_type == "anthropic-messages":
+            return AnthropicMessagesAgent(AnthropicMessagesConfig(
+                base_url=selected_base_url,
+                api_key=selected_api_key,
+                model=selected_model,
+            ))
+        if selected_type == "openai-chat":
+            return OpenAIChatAgent(OpenAIChatConfig(
+                base_url=selected_base_url,
+                api_key=selected_api_key,
+                model=selected_model,
                 reasoning_effort="none",
                 force_final_at_max_turns=force_final_at_max_turns,
             ))
-        elif runtime_type == "claude-code":
-            agent = ClaudeCodeAgent(ClaudeCodeConfig(
-                base_url=base_url,
-                api_key=api_key,
-                model=model,
-                cli_path=cli_path,
+        if selected_type == "claude-code":
+            return ClaudeCodeAgent(ClaudeCodeConfig(
+                base_url=selected_base_url,
+                api_key=selected_api_key,
+                model=selected_model,
+                cli_path=selected_cli_path,
                 workspace_mcp_path=workspace_mcp_path,
                 autocompact_tokens=autocompact_tokens,
                 empty_thinking_compat_enabled=empty_thinking_compat_enabled,
                 context_diagnostics_enabled=context_diagnostics_enabled,
                 force_final_at_max_turns=force_final_at_max_turns,
             ))
-        else:
-            raise ValueError(f"unsupported runtime_type: {runtime_type}")
+        raise ValueError(f"unsupported runtime_type: {selected_type}")
+
+    if agent is None:
+        agent = make_agent(runtime_type, base_url, api_key, model, cli_path)
     if query_agent is None and any(
         value is not None
-        for value in (query_base_url, query_api_key, query_model, query_cli_path)
+        for value in (
+            query_base_url, query_api_key, query_model, query_cli_path,
+            query_runtime_type,
+        )
     ):
-        query_agent = ClaudeCodeAgent(
-            ClaudeCodeConfig(
-                base_url=query_base_url or base_url,
-                api_key=query_api_key or api_key,
-                model=query_model or model,
-                cli_path=query_cli_path if query_cli_path is not None else cli_path,
-                workspace_mcp_path=workspace_mcp_path,
-            )
+        query_agent = make_agent(
+            query_runtime_type or runtime_type,
+            query_base_url or base_url,
+            query_api_key or api_key,
+            query_model or model,
+            query_cli_path if query_cli_path is not None else cli_path,
         )
     return Runtime(
         agent,
