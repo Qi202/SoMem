@@ -29,8 +29,14 @@ tool or the specialized memory tools and the actual inventory below. Search
 wording may differ from the question, so inspect semantically relevant files
 and use several literal queries when needed.
 
-When useful, first locate likely files, inspect their headings, and read only
-the relevant sections. This is a recommendation, not a required tool order.
+Prefer Topic memory as the starting point for relevant evidence; normally
+search within Topics before broadening the search. Read or search Source memory
+when original details, source verification, or additional evidence are needed.
+When necessary, search both Topics and Sources. Set path_prefix="topics/" for
+Topic searches and path_prefix="sources/" for Source searches; omit path_prefix
+to search both. Choose BM25, embedding, or fused search according to the question
+and the tools actually available. There is no fixed tool-call order.
+Inspect relevant file headings and read the sections needed for the question.
 read_memory_file supports optional 1-based offset and limit parameters.
 
 For temporal, update, counting, comparison, and multi-session questions,
@@ -91,8 +97,15 @@ tool or the specialized memory tools and the actual inventory below. Search
 wording may differ from the question, so inspect semantically relevant files
 and use several literal queries when needed.
 
-When useful, first locate likely files, inspect their headings, and read only
-the relevant sections. This is a recommendation, not a required tool order.
+Prefer Topic memory as the starting point for relevant evidence; normally
+search within Topics before broadening the search. Read or search Source memory
+when original details, source verification, or additional evidence are needed.
+When necessary, search both Topics and Sources. Set path_prefix="topics/" for
+Topic searches and path_prefix="sources/" for Source searches; omit path_prefix
+to search both. Choose BM25, embedding, or fused search according to the question
+and the tools actually available. There is no fixed tool-call order.
+Inspect relevant file headings and read the sections needed for the question.
+read_memory_file supports optional 1-based offset and limit parameters.
 
 For temporal, update, counting, comparison, and multi-session questions,
 inspect all relevant events. Preserve historical states; prefer the latest fact
