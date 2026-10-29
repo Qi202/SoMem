@@ -8,10 +8,18 @@ usage examples, packaging/development checks and lazy public API exports. The
 existing `code/src/` algorithm implementation is retained. A release tag or a
 paper-aligned version has not been published by these local changes.
 
-The working research tree differs in 33 same-path core files as audited on
-2026-10-29. Those differences require a scoped review and validation; they are
-not automatically merged. Internal experiment state and credentials are not
-part of this repository.
+The initial comparison with the research tree found 33 different same-path core
+files. Most differences were naming changes; that count was not a count of
+algorithm changes. The framework selection below resolves the intended local
+alignment. Internal experiment state and credentials are not part of this
+repository.
+
+Subsequent local alignment uses development Reader instructions and complete
+Source-message parsing, while retaining SoMem naming and the public adapter
+selection. BM25 cache version 5 rebuilds older indexes. These changes are not yet
+pushed. Source-archive newline compatibility is a separate remaining difference.
+The synthetic Writer → memory → Reader example passed locally with GPT-4o-mini
+through OpenRouter; its scope and unexercised paths are recorded in validation.
 
 ## Priorities
 
@@ -19,13 +27,16 @@ part of this repository.
 |---|---|---|
 | Installation, README and API/CLI/MCP guides | P0 | Implemented; local release checks passed |
 | Offline transaction/retrieval example | P0 | Implemented; validated by release checks |
-| Live conversation → memory → answer example | P0 | Recipe and dry-run provided; live provider validation pending |
+| Live conversation → memory → answer example | P0 | Passed locally with GPT-4o-mini/OpenRouter: exact Source preservation, Core writes, BM25 retrieval, correct answer and scratch validation; not yet pushed |
 | License | P0 | MIT confirmed and added, including distribution metadata |
-| Align public core with selected paper version | P0 | Version differences identified; selection deferred pending review |
+| Select and locally align the public framework version | P0 | Complete locally: SoMem naming, public adapters, development Reader instructions and full-message Source parsing; 222 tests passed; not yet pushed |
 | Paper reproduction entry points | **P1** | Deferred until experimental structure/settings are final |
 | Results and provenance bundle | **P1** | Deferred until tables and result selection are final |
-| CI, packaging and environment snapshot | P1 | Added locally; GitHub execution awaits publication |
-| Provider compatibility and platform matrix | P1 | Document implemented vs verified support; additional live tests pending |
+| CI, packaging and environment snapshot | P1 | Published baseline 304291f passed GitHub CI; subsequent local changes have not been pushed |
+| Provider compatibility and platform matrix | P1 | One GPT-4o-mini/OpenRouter example verified; additional providers, platforms, semantic citation coverage and unexercised management paths remain |
+| Source-archive newline compatibility | P1 | Remaining CRLF normalization difference; separate compatibility repair |
+| Limit automatic Git commits to memory files | P1 | Confirmed unrelated staged-file inclusion; regression and repair pending |
+| Correct transaction source attribution | P1 | Confirmed manual imports receive claude-code source IDs; code and documentation repair pending |
 | Citation metadata and repository About/topics | P1 | Final paper/author metadata and remote update deferred |
 | Short video, notebook and broader integrations | P2 | Future work |
 

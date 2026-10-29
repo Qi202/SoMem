@@ -335,43 +335,66 @@ def parse_topic_file(path: Path, topics_root: Path) -> list[MemoryEvent]:
 
 
 def parse_source_file(path: Path, sources_root: Path) -> list[MemoryEvent]:
-    """Parse each archived source turn as one searchable record."""
+    """Index complete source turns, including paragraphs and list continuations."""
     relative = path.relative_to(sources_root).as_posix()
     headings: list[str] = []
-    pending_source_id = ""
+    source_id = ""
+    turn_lines: list[str] = []
+    turn_line = 0
+    turn_headings: list[str] = []
     events: list[MemoryEvent] = []
+
+    def flush() -> None:
+        if not source_id or not turn_lines:
+            return
+        content = _clean_markdown("\n".join(turn_lines))
+        if not content:
+            return
+        event_date = _date(turn_lines[0])
+        events.append(MemoryEvent(
+            event_id=source_id, path=f"sources/{relative}", line=turn_line,
+            headings=list(turn_headings), date=event_date,
+            dates=[event_date] if event_date else [], content=content,
+            refs=[source_id],
+        ))
+
     for line_number, line in enumerate(
         path.read_text(encoding="utf-8").splitlines(), start=1
     ):
+        marker = _SOURCE_ID_RE.search(line)
+        if marker:
+            flush()
+            source_id = marker.group(1).strip()
+            turn_lines = []
+            turn_headings = list(headings)
+            continue
+        if line.lstrip().startswith(("<a ", "<!--")):
+            continue
+        if source_id:
+            # Headings and list items inside a marked turn are source content.
+            if line.strip():
+                if not turn_lines:
+                    turn_line = line_number
+                turn_lines.append(line)
+            continue
         heading = _HEADING_RE.match(line)
         if heading:
             level = len(heading.group(1))
-            headings = headings[: level - 1] + [heading.group(2).strip()]
+            headings = headings[:level - 1] + [heading.group(2).strip()]
             continue
-        source_id = _SOURCE_ID_RE.search(line)
-        if source_id:
-            pending_source_id = source_id.group(1).strip()
-            continue
-        if not line.strip() or line.lstrip().startswith(("<a ", "<!--")):
-            continue
-        refs = [pending_source_id] if pending_source_id else _refs(line)
+        # Retain support for legacy, unmarked line-level references.
+        refs = _refs(line)
         content = _clean_markdown(line)
         if not refs or not content:
             continue
         event_date = _date(line)
         events.append(MemoryEvent(
-            event_id=pending_source_id or _stable_id(
-                f"sources/{relative}", line_number, content, refs
-            ),
-            path=f"sources/{relative}",
-            line=line_number,
-            headings=list(headings),
-            date=event_date,
-            dates=[event_date] if event_date else [],
-            content=content,
-            refs=refs,
+            event_id=_stable_id(f"sources/{relative}", line_number, content, refs),
+            path=f"sources/{relative}", line=line_number, headings=list(headings),
+            date=event_date, dates=[event_date] if event_date else [],
+            content=content, refs=refs,
         ))
-        pending_source_id = ""
+    flush()
     return events
 
 
@@ -442,14 +465,14 @@ class MemoryBM25Index:
             return
         try:
             payload = json.loads(self.cache_path.read_text(encoding="utf-8"))
-            if payload.get("version") == 4 and isinstance(payload.get("files"), dict):
+            if payload.get("version") == 5 and isinstance(payload.get("files"), dict):
                 self._files = payload["files"]
         except (OSError, ValueError, TypeError):
             self._files = {}
 
     def _write_cache(self) -> None:
         self.memory_dir.mkdir(parents=True, exist_ok=True)
-        payload = {"version": 4, "files": self._files}
+        payload = {"version": 5, "files": self._files}
         fd, temporary = tempfile.mkstemp(prefix=f"{self._runtime_name}-bm25-", dir=self.memory_dir)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:

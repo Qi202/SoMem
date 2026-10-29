@@ -44,6 +44,29 @@ inspect all relevant events. Preserve historical states; prefer the latest fact
 only when the question asks for current state.
 {source_verification_guidance}
 
+Before finalizing, check the requested operation and every relevant constraint.
+For counts and totals, enumerate distinct qualifying items from the evidence,
+exclude duplicates and merely suggested or planned actions, then verify the
+arithmetic and units. For dates and ordering, anchor relative expressions to
+the originating turn date and the question to Current Date; compare event
+dates rather than record dates. Return one consistent result, not conflicting
+initial and corrected answers. If an operand is missing, state the limitation;
+absence of a record does not establish that an event never occurred.
+
+When Core, Recent, or Topic contains a relevant additional or newer fact,
+follow its reference or search for that specific fact and verify its Source.
+If it conflicts with a Source already read, inspect the Source supporting each
+claim before deciding. Do not discard a newer clue just because the first
+Source found is older. Use the latest applicable actual update for current
+state questions, while preserving the requested state for historical questions.
+
+A specialized search miss is not proof of absence. If searches fail despite a
+concrete clue, or a result may omit a list or multiline detail, use the existing
+read-only bash search on the relevant source files and read the surrounding
+full turn with read_memory_file. Vary targeted queries and inspect the original
+paragraphs before declaring the evidence missing. Keep Source verification and
+all read-only/path restrictions; never modify memory to resolve a discrepancy.
+
 When the question states an explicit calendar window, or a calendar window has
 already been resolved from evidence, pass optional date_from/date_to in the same
 BM25 or embedding tool call. Each value may be YYYY, YYYY-MM, or YYYY-MM-DD.
@@ -105,12 +128,34 @@ Topic searches and path_prefix="sources/" for Source searches; omit path_prefix
 to search both. Choose BM25, embedding, or fused search according to the question
 and the tools actually available. There is no fixed tool-call order.
 Inspect relevant file headings and read the sections needed for the question.
-read_memory_file supports optional 1-based offset and limit parameters.
 
 For temporal, update, counting, comparison, and multi-session questions,
 inspect all relevant events. Preserve historical states; prefer the latest fact
 only when the question asks for current state.
 {source_verification_guidance}
+
+Before finalizing, check the requested operation and every relevant constraint.
+For counts and totals, enumerate distinct qualifying items from the evidence,
+exclude duplicates and merely suggested or planned actions, then verify the
+arithmetic and units. For dates and ordering, anchor relative expressions to
+the originating turn date and the question to Current Date; compare event
+dates rather than record dates. Return one consistent result, not conflicting
+initial and corrected answers. If an operand is missing, state the limitation;
+absence of a record does not establish that an event never occurred.
+
+When Core, Recent, or Topic contains a relevant additional or newer fact,
+follow its reference or search for that specific fact and verify its Source.
+If it conflicts with a Source already read, inspect the Source supporting each
+claim before deciding. Do not discard a newer clue just because the first
+Source found is older. Use the latest applicable actual update for current
+state questions, while preserving the requested state for historical questions.
+
+A specialized search miss is not proof of absence. If searches fail despite a
+concrete clue, or a result may omit a list or multiline detail, use the existing
+read-only bash search on the relevant source files and read the surrounding
+full turn with read_memory_file. Vary targeted queries and inspect the original
+paragraphs before declaring the evidence missing. Keep Source verification and
+all read-only/path restrictions; never modify memory to resolve a discrepancy.
 
 When the question states an explicit calendar window, or a calendar window has
 already been resolved from evidence, pass optional date_from/date_to in the same

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Validate the synthetic live example with GPT-4o-mini through OpenRouter; record Source integrity, actual retrieval, usage and the limited coverage of the run.
+- Align Reader guidance with the development version while retaining SoMem naming and the public adapter selection.
+- Index complete Source messages, including paragraphs/lists, in BM25 and embedding retrieval; rebuild older BM25 caches using cache format 5.
+
 - Add installation and API/CLI/MCP guides, architecture overview and configuration examples.
 - Add offline memory transaction/retrieval and model-driven conversation examples.
 - Export Runtime, create_runtime and OpenAI Chat adapter/config through the lazy `somem` facade.
