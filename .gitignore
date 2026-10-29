@@ -4,8 +4,14 @@ __pycache__/
 *.egg-info/
 .venv*/
 .env*
+!.env.example
 .DS_Store
 .cache*/
 .runtime*/
 results/
 benchmarks/
+build/
+dist/
+.memory/
+demo-memory/
+live-demo-memory/

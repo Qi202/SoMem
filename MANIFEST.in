@@ -1,0 +1,6 @@
+include LICENSE README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md .env.example
+include requirements.txt
+recursive-include docs *.md *.svg
+recursive-include examples *.py *.json
+recursive-include scripts *.py
+recursive-include constraints *.txt

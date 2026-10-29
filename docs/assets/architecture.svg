@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="310" viewBox="0 0 960 310" role="img" aria-labelledby="title desc">
+  <title id="title">SoMem document memory</title>
+  <desc id="desc">Conversation Sources remain immutable. A Writer edits Topics with nested Core. Validation commits changes and rebuilds Recent, Timeline and Relations. A Reader searches documents and verifies original Sources.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#506580"/></marker></defs>
+  <rect width="960" height="310" rx="16" fill="#f7fafc"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#20334d">
+    <rect x="22" y="91" width="160" height="100" rx="12" fill="#e7effa" stroke="#aac0df"/>
+    <text x="102" y="124" font-size="19" font-weight="bold">Sources</text>
+    <text x="102" y="151" font-size="13">Original conversations</text><text x="102" y="172" font-size="13">Immutable evidence</text>
+    <rect x="222" y="108" width="117" height="66" rx="12" fill="#edf1f9" stroke="#aac0df"/>
+    <text x="280" y="147" font-size="19" font-weight="bold">Writer</text>
+    <rect x="378" y="60" width="177" height="162" rx="12" fill="#e8f4ed" stroke="#95bfa8"/>
+    <text x="466" y="94" font-size="19" font-weight="bold">Topics</text><text x="466" y="120" font-size="13">Cited Markdown</text>
+    <rect x="401" y="141" width="131" height="56" rx="9" fill="#f5fbf7" stroke="#bfdccf"/>
+    <text x="466" y="165" font-size="16" font-weight="bold">Core</text><text x="466" y="183" font-size="12">Bounded context</text>
+    <rect x="594" y="91" width="167" height="100" rx="12" fill="#fff4df" stroke="#d6bd83"/>
+    <text x="677" y="121" font-size="17" font-weight="bold">Validate + commit</text><text x="677" y="148" font-size="13">Rebuild access views</text><text x="677" y="170" font-size="12">Recent · Timeline · Relations</text>
+    <rect x="801" y="108" width="135" height="66" rx="12" fill="#edf1f9" stroke="#aac0df"/>
+    <text x="868" y="147" font-size="19" font-weight="bold">Reader</text>
+    <text x="478" y="281" font-size="13">Search Topics and derived views; return to Sources to verify evidence</text>
+  </g>
+  <g fill="none" stroke="#506580" stroke-width="1.7" marker-end="url(#arrow)">
+    <path d="M182 141H221"/><path d="M339 141H377"/><path d="M555 141H593"/><path d="M761 141H800"/>
+    <path d="M868 174V245H102V192"/>
+  </g>
+</svg>

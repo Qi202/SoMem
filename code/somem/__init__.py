@@ -20,6 +20,10 @@ _EXPORTS = {
     "inspect": ("src.retrieval.inspect", None),
     "collect_answer": ("src.retrieval.agent", "collect_answer"),
     "QueryConfig": ("src.retrieval.config", "QueryConfig"),
+    "Runtime": ("src.retrieval.runtime", "Runtime"),
+    "create_runtime": ("src.retrieval.runtime", "create_runtime"),
+    "OpenAIChatAgent": ("src.agent_runtime.openai_chat", "OpenAIChatAgent"),
+    "OpenAIChatConfig": ("src.agent_runtime.openai_chat", "OpenAIChatConfig"),
 }
 
 __all__ = sorted(_EXPORTS)

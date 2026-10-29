@@ -1,49 +1,120 @@
 # SoMem: Self-Organized Document Memory
 
-Framework code for a persistent, document-based agent memory.
+Persistent, document-based memory for agents. SoMem keeps original conversations
+as immutable Sources, lets a Writer organize cited Markdown documents, and gives
+a Reader tools to find and verify relevant evidence.
 
-## Framework
+[Get started](docs/getting-started.md) · [Python API](docs/python-api.md) ·
+[MCP integration](docs/mcp.md) · [Configuration](docs/configuration.md) ·
+[Runtime support](docs/agent-runtime-support.md) · [Development](CONTRIBUTING.md)
 
-SoMem separates immutable conversation records, editable semantic documents, and bounded context supplied before search. A Writer organizes and revises Markdown documents with stable references to source evidence. Deterministic validation checks document structure and references before accepted edits rebuild the access views. A Reader decides which documents to search and read, including returning to original records when necessary.
+![SoMem architecture: immutable Sources feed Writer-managed Topics and nested Core; validated documents supply derived views and Reader retrieval.](docs/assets/architecture.svg)
 
-The same model can perform both roles, or separate models can share the workspace. The framework includes agent adapters, document operations, lexical and semantic retrieval, workspace validation, and derived views.
+## What SoMem provides
 
-Runtime support and remaining adapter limitations are documented in [`docs/agent-runtime-support.md`](docs/agent-runtime-support.md).
+- **Readable memory:** editable Topics with stable references to original Sources; bounded Core lives in `topics/core.md`.
+- **Validated updates:** transactions check document structure and references before installing edits and rebuilding access views.
+- **Flexible reading:** lexical and semantic retrieval, source inspection, and separate Writer/Reader models sharing one workspace.
+- **Agent integration:** Python API, workspace CLI, and stdio MCP server with six memory tools and optional workspace layers.
 
-## Code organization
+## Install
 
-| Directory | Responsibility |
-|---|---|
-| `code/src/markdown/` | Parse and render memory documents, blocks, and references |
-| `code/src/management/` | Writer tools, semantic edits, source preservation, and validated transactions |
-| `code/src/runtime/` | Context capacity, token accounting, and deterministic access views |
-| `code/src/retrieval/` | Reader context, searches, document access, and tool dispatch |
-| `code/src/agent_runtime/` | Model and agent interfaces |
-| `code/src/build.py` | Incremental memory construction and checkpoint boundaries |
-| `code/somem/` | Workspace interface and MCP integration |
-| `code/tests/` | Offline framework integrity checks |
+Use Python **3.12+**. From a source checkout:
 
-## Workspace representation
+```bash
+git clone https://github.com/Qi202/SoMem.git
+cd SoMem
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+somem --help
+```
+
+This installs the framework and runtime dependencies, including the embedding
+stack. A model API key is only needed for model-driven writing or answering.
+See [installation and troubleshooting](docs/getting-started.md).
+
+## Try it without an API key
+
+```bash
+python examples/offline_demo.py --workspace demo-memory
+somem validate --workspace demo-memory
+```
+
+The demo commits a cited preference, retrieves it with BM25, and prints the saved
+document and source reference. It uses real transaction and search code with a
+manually supplied Topic edit. There are no model calls or embedding-model
+downloads. The first tokenizer use may download its encoding table. Choose a new
+workspace for each run.
+
+For model-driven **conversation → memory → answer**, follow the
+[live example](docs/getting-started.md#model-driven-example), with separate
+Writer/Reader settings and a `--dry-run` input check.
+
+## Connect an agent through MCP
+
+Add this entry to your MCP client, using absolute paths:
+
+```json
+{
+  "mcpServers": {
+    "somem": {
+      "command": "/absolute/path/to/SoMem/.venv/bin/somem",
+      "args": ["mcp", "--workspace", "/absolute/path/to/memory", "--git-commit", "off"]
+    }
+  }
+}
+```
+
+Tools: `memory_status`, `memory_list`, `memory_read`, `memory_grep`,
+`memory_search`, `memory_update`. The server uses the host agent's model; it does
+not start another model. See [MCP tools and layers](docs/mcp.md).
+
+## Memory layout
 
 ```text
 memory/
   sources/             immutable conversation records
-  topics/              editable semantic documents with source references
+  topics/              editable semantic documents
     core.md            bounded context
-  recent_events.jsonl  recent event view
-  timeline/            temporal access views
-  relations/           relation access views
+  recent_events.jsonl  derived recent-event view
+  timeline/            derived temporal views
+  relations.json       derived relation view
   .somem/              local implementation state
 ```
 
-Derived views are access structures. Their content is rebuilt from accepted memory documents rather than supplied as an independent source of facts. Search tools return evidence for the Reader; they do not judge answers.
+Derived views are rebuilt from accepted documents. They are access structures,
+not independent factual sources. Legacy root-level `core.md` remains supported.
 
-## Scope
+## Documentation
 
-This snapshot was synchronized with the working framework on 2026-10-15. New workspaces keep Core in `topics/core.md`; existing workspaces with root-level `core.md` remain supported.
+| Guide | Contents |
+|---|---|
+| [Getting started](docs/getting-started.md) | Installation, offline/live examples, troubleshooting |
+| [Python API](docs/python-api.md) | Transactions, construction, reading and return values |
+| [Configuration](docs/configuration.md) | Credentials, models, effort and budgets |
+| [CLI and MCP](docs/mcp.md) | Commands, client configuration, tools and layers |
+| [Runtime support](docs/agent-runtime-support.md) | Adapters and validation boundaries |
+| [Release scope](docs/release-scope.md) | Public snapshot and deferred experiment material |
+| [Local validation](docs/validation.md) | Checks passed and remaining validation boundaries |
+| [Contributing](CONTRIBUTING.md) | Tests, documentation and packaging |
 
-This repository contains framework implementation and selected offline tests. It does not contain benchmark data, experimental launchers, run configurations, evaluation/Judge protocols, experimental results, or paper files. Internal agent instructions remain part of the implementation; they are not a benchmark execution recipe.
+## Project status
 
-The snapshot uses neutral package and commit metadata and contains no inherited repository history. It does not claim to reproduce the paper's experiment runs independently of their omitted settings.
+This is the `0.1.0` framework line. The public core was synchronized on
+2026-10-15, followed by Topic-first and runtime-selection updates on 2026-10-17.
+Current local experiments use additional changes. This is not yet a
+paper-reproduction release; benchmark launchers, final settings, Judge protocols
+and result bundles will be handled separately.
 
-Dependencies are declared in `pyproject.toml` and `requirements.txt`. Credentials, model endpoints, generated workspaces, caches, and runtime outputs are not distributed.
+The live example is a usage recipe, not verified support for every provider.
+See [runtime support](docs/agent-runtime-support.md). A package version here does
+not imply a PyPI release or a published Git tag.
+
+## License and citation
+
+SoMem is distributed under the [MIT License](LICENSE). Dependencies retain their
+own licenses.
+
+Until paper metadata is finalized, cite the repository URL and the commit used.
+No paper identifier or performance claim is inferred here.

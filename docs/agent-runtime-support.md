@@ -1,5 +1,20 @@
 # Agent runtime support
 
+## Support matrix
+
+| Entry point | Implementation | Validation boundary |
+|---|---|---|
+| Local workspace API and CLI | Implemented | Offline transaction/document checks and release smoke checks |
+| Stdio MCP | Implemented; six tools and layers | Protocol initialize/list/read/status smoke; host-specific integration still needs testing |
+| Claude Code runtime | Implemented; default adapter | SDK required; provider-backed run behavior depends on model and SDK |
+| OpenAI Chat runtime | Implemented for Writer and Reader | Offline tool-validation/recovery tests; public-snapshot live Writer/Reader example not yet certified |
+| Anthropic Messages runtime | Implemented | Live provider parity not established by these release checks |
+
+The new examples use the current public core, not the unpublished research
+runtime. Successful research runs on a different snapshot do not establish
+end-to-end validation of this checkout. No blanket model/platform compatibility
+claim follows from an adapter being present.
+
 ## Implemented
 
 SoMem keeps Claude Code as the default runtime. `OpenAIChatAgent` is also implemented for endpoints that support the OpenAI Chat Completions tool-call interface. It validates tool arguments, runs the same SoMem tool handlers, returns tool errors to the model, and records response model and request metadata.

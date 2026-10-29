@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a reproducible framework problem
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Commit/version, Python, OS and adapter. Do not include keys.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic data and redact credentials/private memory.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

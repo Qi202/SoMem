@@ -1,0 +1,16 @@
+name: Feature request
+description: Propose an improvement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and use case
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include alternatives and relevant API or workflow examples.
+    validations:
+      required: true

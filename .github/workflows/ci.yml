@@ -1,0 +1,33 @@
+name: Framework checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install CPU dependencies and framework
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install '.[dev]'
+      - name: Core tests
+        run: python -m pytest code/tests -q
+      - name: Installed API, examples, documentation and MCP
+        run: python scripts/check_release.py
+      - name: Build distributions
+        run: python -m build
+      - name: Check wheel from outside checkout
+        run: |
+          python -m venv --system-site-packages /tmp/somem-wheel
+          /tmp/somem-wheel/bin/python -m pip install --no-deps --force-reinstall dist/*.whl
+          cd /tmp
+          /tmp/somem-wheel/bin/python -c 'from somem import MemoryWorkspace, Runtime, OpenAIChatAgent; print("wheel imports OK")'
+          /tmp/somem-wheel/bin/somem --help

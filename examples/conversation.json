@@ -1,0 +1,11 @@
+{
+  "session_1_date_time": "2026-10-29",
+  "session_1": [
+    {"role": "user", "content": "My name is Alice. I prefer jasmine tea and I avoid coffee in the evening."},
+    {"role": "assistant", "content": "I will remember your drink preferences."}
+  ],
+  "session_2_date_time": "2026-10-30",
+  "session_2": [
+    {"role": "user", "content": "For tomorrow's meeting, please suggest a drink that suits my preferences."}
+  ]
+}

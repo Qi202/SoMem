@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "somem": {
+      "command": "/absolute/path/to/.venv/bin/somem",
+      "args": ["mcp", "--workspace", "/absolute/path/to/memory", "--git-commit", "off"]
+    }
+  }
+}
