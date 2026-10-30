@@ -4,3 +4,5 @@ recursive-include docs *.md *.svg
 recursive-include examples *.py *.json
 recursive-include scripts *.py
 recursive-include constraints *.txt
+
+recursive-include code/somem/evaluation_sources *.py LICENSE NOTICE.md

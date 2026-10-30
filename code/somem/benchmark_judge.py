@@ -1,7 +1,6 @@
 """Adapters to hash-locked scoring sources; no alternate scoring prompts."""
 import ast
 import hashlib
-import importlib.util
 from importlib.resources import files
 import json
 import os
@@ -84,13 +83,12 @@ def make_scorer(benchmark,client,*,lightmem_dir=None,locomo_judge=None):
     captured=CapturedClient(client,check_label=benchmark=='locomo')
     model='openai/gpt-4o-mini'
     if benchmark=='locomo':
-        if locomo_judge is None:
-            raise ValueError('--locomo-judge must point to the hash-pinned llm_judge.py')
-        path=Path(locomo_judge)
-        verified_text(path,LOCKS['locomo'])
-        spec=importlib.util.spec_from_file_location('_somem_locked_locomo_judge',path)
-        module=importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        path=(Path(locomo_judge) if locomo_judge is not None else
+              files('somem').joinpath('evaluation_sources/pinned/locomo_judge.py'))
+        text=verified_text(path,LOCKS['locomo'])
+        scope={'__name__':'_somem_locked_locomo_judge'}
+        exec(compile(text,str(path),'exec'),scope)
+        module=SimpleNamespace(**scope)
         captured.label_parser=module.extract_json
         def score(row):
             if int(row['category']) not in (1,2,3,4):raise ValueError('LoCoMo category outside 1–4')
@@ -113,8 +111,16 @@ def make_scorer(benchmark,client,*,lightmem_dir=None,locomo_judge=None):
             value=statistics.mean(n['score'] for n in nuggets)
             return {'nuggets':nuggets,'score':round(value,4),'passed':value>=0.5}
     else:
-        if lightmem_dir is None:raise ValueError('--lightmem-dir must point to the pinned LightMem checkout')
-        texts={p:verified_text(Path(lightmem_dir)/p,h) for p,h in LOCKS.items() if p.startswith('src/')}
+        bundled={
+            'longmemeval.py':'longmemeval_dispatch.py',
+            'operators.py':'longmemeval_operators.py',
+            'prompts.py':'longmemeval_prompts.py',
+            'memory_evaluation.py':'longmemeval_evaluation.py',
+        }
+        texts={p:verified_text(
+            Path(lightmem_dir)/p if lightmem_dir is not None else
+            files('somem').joinpath('evaluation_sources/pinned/'+bundled[Path(p).name]),h)
+            for p,h in LOCKS.items() if p.startswith('src/')}
         dispatch=source_method(texts['src/lightmem/memory_toolkits/memories/datasets/longmemeval.py'],
                                'LongMemEval','get_judge_prompt_info')
         preprocess=source_method(texts['src/lightmem/memory_toolkits/inference_utils/operators.py'],

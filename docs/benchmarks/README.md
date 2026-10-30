@@ -73,11 +73,11 @@ is the authoritative loadable default for version `public-v1-20261030`.
 
 ## Scoring and completion boundary
 
-The bundled metadata records the user-selected Judge protocols: LightMem
-strictJudge for LoCoMo; Mem0 rubric-nugget for both BEAM scales; the pinned
-LightMem evaluator for LongMemEval-S. All use GPT-4o-mini and full saved answers.
-Judge adapters verify the source hashes/reference revision. BEAM scoring source
-is included; the LightMem sources are supplied externally as described below.
+The bundled metadata records the selected scoring protocols: strictJudge
+correctness for LoCoMo, rubric-nugget scoring for both BEAM scales, and the
+pinned question-type evaluation for LongMemEval-S. All use GPT-4o-mini and
+full saved answers.
+Judge adapters verify the source hashes/reference revision. all required scoring snapshots are included in the package.
 
 ## Batch commands
 
@@ -135,22 +135,18 @@ private experiment drivers:
 somem-benchmark judge --benchmark beam-100k --answers work/beam100k-qa --output work/beam100k-judged
 ```
 
-For LoCoMo, supply the original hash-pinned LightMem `llm_judge.py` described in
-[the protocol](locomo.md); the adapter calls its `evaluate_llm_judge` directly:
+All four Judges are ready to use after installation. Select the benchmark and
+supply the saved answers; there is no external source checkout or path option:
 
 ```bash
-somem-benchmark judge --benchmark locomo --answers work/locomo-qa --locomo-judge /path/to/llm_judge.py --output work/locomo-judged
+somem-benchmark judge --benchmark locomo --answers work/locomo-qa --output work/locomo-judged
+somem-benchmark judge --benchmark beam-1m --answers work/beam1m-qa --output work/beam1m-judged
+somem-benchmark judge --benchmark longmemeval-s --answers work/lme-qa --output work/lme-judged
 ```
 
-For LongMemEval-S, supply a LightMem source checkout at the pinned revision
-`8449d574df6bae1bdf3314a1564da65e2f37e046`. The adapter verifies all four file
-hashes, executes the original prompt dispatch/preprocessing and templates, and
-uses the original correctness expression. It does not need LightMem's full
-inference dependency stack:
-
-```bash
-somem-benchmark judge --benchmark longmemeval-s --answers work/lme-qa --lightmem-dir /path/to/LightMem --output work/lme-judged
-```
+The local scoring snapshots preserve the prompts, full-answer handling and
+parsers used by the experiment protocol. Original code attribution and license
+are retained in the package's scoring-source notice.
 
 A source hash mismatch stops before scoring. The adapter saves per-question
 scores and raw provider responses, including usage/returned model data. Failed
@@ -170,8 +166,8 @@ resume. Judge adapters read saved answers and never regenerate QA.
 
 These are current public recipes. They are not a claim that historical best
 scores have been rerun under the unified configuration. Live benchmark runs
-were not performed during this implementation. LightMem scoring source is an
-explicit external dependency; no alternate prompt is substituted if absent.
+were not performed during this implementation. All required scoring sources ship with the package; no additional memory
+framework installation is required.
 
 Further details: [construction](construction-settings.md),
 [Reader](reader-settings.md), [LoCoMo](locomo.md), and

@@ -112,3 +112,11 @@ and packaging behavior, not reproduced paper scores.
   to the README PNG. No paper sources or historical results were modified.
 - No live model/Judge requests were made; no aggregate report or automatic
   benchmark resume feature was added.
+
+## Self-contained scoring package (2026-10-30)
+
+The previously external scoring sources are now bundled without changes, with
+their original license and attribution. All 246 offline tests passed. The
+LoCoMo, BEAM and LongMemEval scorers loaded from the wheel and accepted simulated
+responses without an external source directory. The CLI no longer requests
+Judge source paths. No live scoring requests were made.

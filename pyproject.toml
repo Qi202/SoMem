@@ -36,4 +36,5 @@ where = ["code"]
 include = ["somem*", "src*"]
 
 [tool.setuptools.package-data]
-somem = ["protocol_data/*.json", "evaluation_sources/*.py"]
+somem = ["protocol_data/*.json", "evaluation_sources/*.py", "evaluation_sources/pinned/*.py",
+         "evaluation_sources/pinned/LICENSE", "evaluation_sources/pinned/NOTICE.md"]

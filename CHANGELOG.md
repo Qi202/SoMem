@@ -33,3 +33,6 @@ it is not a claim that a corresponding package or Git tag was published.
 - Integrate hash-locked Judges with full-answer scoring and per-question outputs.
 - Keep orchestration, aggregate reporting and automatic resume outside this entry.
 - Replace the README architecture illustration with the current paper Figure 1.
+
+- Bundle the existing local scoring sources and remove external Judge-source
+  path requirements; preserve scoring semantics, hashes, license and attribution.

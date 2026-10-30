@@ -105,8 +105,6 @@ def main(argv=None):
     p.add_argument('--benchmark',required=True,choices=['locomo','beam-100k','beam-1m','longmemeval-s'])
     p.add_argument('--answers',type=Path,required=True,help='One answers.json, or QA output root')
     p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--lightmem-dir',type=Path)
-    p.add_argument('--locomo-judge',type=Path)
     args = parser.parse_args(argv)
     if args.phase == 'prepare':
         from .benchmark_data import prepare
@@ -114,8 +112,7 @@ def main(argv=None):
         return 0
     if args.phase == 'judge':
         from .benchmark_judge import judge_answers
-        return judge_answers(args.benchmark,args.answers,args.output,
-                             lightmem_dir=args.lightmem_dir,locomo_judge=args.locomo_judge)
+        return judge_answers(args.benchmark,args.answers,args.output)
     document = json.loads(args.input.read_text())
     return run_batch(document,args.output,args.phase,workers=args.workers,
                      memory_root=getattr(args,'memory_root',None))

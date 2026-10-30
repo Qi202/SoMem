@@ -98,3 +98,28 @@ def test_batch_passes_only_question_to_reader_and_uses_protocol(tmp_path,monkeyp
     rows=json.loads((tmp_path/'qa/0000/answers.json').read_text())
     assert rows[0]['gold']=='tea' and rows[0]['answer']=='complete answer'
     with pytest.raises(FileExistsError):run_batch(document,tmp_path/'qa','qa',memory_root=tmp_path/'build')
+
+
+def test_bundled_locomo_judge_needs_no_source_path_and_rejects_bad_verdict():
+    client=FakeClient(['{"label":"CORRECT"}','{"label":"INVALID"}'])
+    score=make_scorer('locomo',client)
+    row={'question':'q','gold':'a','answer':'full\nanswer','category':4}
+    assert score(row)['is_correct']
+    assert 'full\nanswer' in client.requests[0]['messages'][0]['content']
+    with pytest.raises(ValueError,match='invalid strictJudge label'):
+        score(row)
+
+
+def test_bundled_lme_preserves_routing_and_parser_without_external_checkout():
+    client=FakeClient(['yes','incorrect','no'])
+    score=make_scorer('longmemeval-s',client)
+    row={'question_id':'q','question_type':'multi-session','question':'q',
+         'gold':'a','answer':'complete answer'}
+    assert score(row)['prompt_name']=='exact-match'
+    # Deliberately retain the pinned substring parser, including its edge case.
+    assert score(row)['is_correct']
+    row['question_id']='q_abs'
+    result=score(row)
+    assert result['prompt_name']=='longmemeval-abstention'
+    assert not result['is_correct']
+    assert all(r['top_p']==0.95 and r['temperature']==0 for r in client.requests)

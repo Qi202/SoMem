@@ -89,7 +89,7 @@ forced answering actually occurred.
 
 ## Evaluation
 
-Use the unchanged LightMem `strictJudge` implementation,
+Use the bundled, unchanged `strictJudge` implementation,
 `experiments/locomo/llm_judge.py`, calling `evaluate_llm_judge` with its original
 `ACCURACY_PROMPT`. The pinned evaluator file SHA-256 is:
 
@@ -97,9 +97,9 @@ Use the unchanged LightMem `strictJudge` implementation,
 753889df01f381980b1d96a4aab480b5ff8b0919e0e0ac7092bbf828bdfe1dc6
 ```
 
-The local experiment tree stores this file under
-`code/third_party/lightmem/experiments/locomo/llm_judge.py`; it has not yet been
-packaged in this public repository. Do not substitute another evaluator.
+The exact scoring file is bundled in the package under
+`somem/evaluation_sources/pinned/locomo_judge.py`. No external source checkout
+is required. Do not substitute another evaluator.
 
 Use GPT-4o-mini (`openai/gpt-4o-mini` on OpenRouter), temperature 0, and the
 original JSON `CORRECT`/`WRONG` verdict protocol. Score the full saved answer.
@@ -135,5 +135,5 @@ claim to reproduce the README's best observed score.
 
 - Protocol choices: confirmed.
 - Protocol documentation: organized.
-- Public dataset runner and pinned Judge adapter: implemented; LightMem source is supplied externally.
+- Public dataset runner and pinned Judge adapter: implemented with bundled scoring sources.
 - New experiments or end-to-end reruns for this documentation update: not run.
