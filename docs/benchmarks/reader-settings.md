@@ -31,8 +31,7 @@ All four public construction recipes now use the same confirmed settings:
 Luna6 Writer, 120 turns, Core capacity /
 repair target 4000/3600, verification every session, and local organization every
 two completed sessions. Dataset-specific batching is confirmed in the [construction settings](construction-settings.md)
-and Writer overrides record the full agreed profile. Benchmark runners remain
-to be packaged; historical builds retain their original configurations.
+and Writer overrides record the full agreed profile. Benchmark entry points are available; historical builds retain their original configurations.
 
 Confirmed Writer overrides and interval semantics are recorded in
 [construction settings](construction-settings.md).

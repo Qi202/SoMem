@@ -11,7 +11,7 @@ Recent limit 50, and final management enabled.
 These are partial overrides: construct `MemoryConfig` from `memory_config`,
 then pass it as `memory_config` to `BuildConfig` along with `build_config`.
 Pass the model separately to the Writer adapter and builder.
-The packaged benchmark runners are still pending. The overrides do not alter
+The [batch entry](README.md#batch-commands) applies these settings. The overrides do not alter
 generic framework defaults or historical build artifacts. Missing fields are
 not an agreement to unify the remaining construction settings.
 

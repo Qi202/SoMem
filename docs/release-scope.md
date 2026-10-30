@@ -31,7 +31,7 @@ through OpenRouter; its scope and unexercised paths are recorded in validation.
 | Live conversation → memory → answer example | P0 | Passed locally with GPT-4o-mini/OpenRouter: exact Source preservation, Core writes, BM25 retrieval, correct answer and scratch validation |
 | License | P0 | MIT confirmed and added, including distribution metadata |
 | Select and locally align the public framework version | P0 | Complete locally: SoMem naming, public adapters, development Reader instructions and full-message Source parsing; 222 tests passed |
-| Paper reproduction entry points | **P1** | [Four protocols and package loader](benchmarks/README.md) implemented; dataset adapters, benchmark launchers and pinned Judge integration remain pending |
+| Paper reproduction entry points | **P1** | [Four protocols and batch entry](benchmarks/README.md) implemented: data preparation, build, QA and fixed Judge adapters; LightMem source is externally supplied; no historical-score rerun claimed |
 | Results and provenance bundle | **P1** | Deferred until tables and result selection are final |
 | CI, packaging and environment snapshot | P1 | Baseline 304291f passed GitHub CI; current protocol/Core changes passed 238 local offline tests and a wheel protocol-loading check |
 | Provider compatibility and platform matrix | P1 | One GPT-4o-mini/OpenRouter example verified; additional providers, platforms, semantic citation coverage and unexercised management paths remain |

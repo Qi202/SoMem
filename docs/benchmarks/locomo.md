@@ -1,8 +1,8 @@
 # LoCoMo reproduction protocol
 
 This document records the agreed Topic-first LoCoMo configuration. The framework
-APIs for building memory and answering questions are available; a packaged
-LoCoMo dataset runner and scoring entry point are still to be added. The settings
+APIs for building memory and answering questions are available; the [public batch entry](README.md#batch-commands) provides dataset preparation,
+construction, answering and hash-locked scoring. The settings
 below describe this benchmark recipe, not the defaults of the live demo.
 
 ## Dataset and scope
@@ -123,8 +123,7 @@ pending; report incomplete coverage explicitly. BLEU-1 and token F1 are omitted.
 
 The available API call shapes are documented in the [Python API](../python-api.md).
 The [live demo](../../examples/live_demo.py) illustrates adapter wiring, but its
-budgets and forced-answer setting differ from this benchmark recipe. No new
-benchmark command is claimed here until the dataset runner is packaged.
+budgets and forced-answer setting differ from this benchmark recipe. See the [batch commands](README.md#batch-commands) for the executable entry.
 
 Each run should record the dataset identity, code revision, effective settings,
 Writer/Reader/Judge identities, memory origin, answer files and completion state.
@@ -136,5 +135,5 @@ claim to reproduce the README's best observed score.
 
 - Protocol choices: confirmed.
 - Protocol documentation: organized.
-- Public dataset runner and pinned Judge integration: pending packaging.
+- Public dataset runner and pinned Judge adapter: implemented; LightMem source is supplied externally.
 - New experiments or end-to-end reruns for this documentation update: not run.

@@ -105,7 +105,8 @@
           3,
           4
         ],
-        "aggregation": "micro accuracy"
+        "aggregation": "micro accuracy",
+        "adapter_available": true
       }
     },
     "beam-100k": {
@@ -203,10 +204,11 @@
         "model": "openai/gpt-4o-mini",
         "temperature": 0,
         "answer_input": "complete answer",
-        "implementation_packaged": false,
+        "implementation_packaged": true,
         "protocol": "Mem0 rubric-nugget",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
-        "aggregation": "mean question nugget score and PASS >= 0.5"
+        "aggregation": "mean question nugget score and PASS >= 0.5",
+        "adapter_available": true
       }
     },
     "beam-1m": {
@@ -304,10 +306,11 @@
         "model": "openai/gpt-4o-mini",
         "temperature": 0,
         "answer_input": "complete answer",
-        "implementation_packaged": false,
+        "implementation_packaged": true,
         "protocol": "Mem0 rubric-nugget",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
-        "aggregation": "mean question nugget score and PASS >= 0.5"
+        "aggregation": "mean question nugget score and PASS >= 0.5",
+        "adapter_available": true
       }
     },
     "longmemeval-s": {
@@ -409,7 +412,8 @@
         "protocol": "pinned LightMem",
         "reference_commit": "8449d574df6bae1bdf3314a1564da65e2f37e046",
         "top_p": 0.95,
-        "aggregation": "question accuracy"
+        "aggregation": "question accuracy",
+        "adapter_available": true
       }
     }
   }

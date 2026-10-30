@@ -26,3 +26,10 @@ it is not a claim that a corresponding package or Git tag was published.
 - Add four versioned, loadable construction/Reader recipes with explicit defaults.
 - Keep Core files in place while allowing evidence-preserving moves into Topics.
 - Document benchmark best scores and the remaining dataset-runner/Judge work.
+
+## Minimal benchmark entry points (2026-10-30)
+
+- Add raw dataset adapters and separate prepare/build/qa/judge batch commands.
+- Integrate hash-locked Judges with full-answer scoring and per-question outputs.
+- Keep orchestration, aggregate reporting and automatic resume outside this entry.
+- Replace the README architecture illustration with the current paper Figure 1.

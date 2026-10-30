@@ -8,7 +8,7 @@ a Reader tools to find and verify relevant evidence.
 [MCP integration](docs/mcp.md) · [Configuration](docs/configuration.md) ·
 [Runtime support](docs/agent-runtime-support.md) · [Development](CONTRIBUTING.md)
 
-![SoMem architecture: immutable Sources feed Writer-managed Topics and nested Core; validated documents supply derived views and Reader retrieval.](docs/assets/architecture.svg)
+[![SoMem paper framework overview](docs/assets/somem-overview.png)](docs/assets/somem-overview.pdf)
 
 ## What SoMem provides
 
@@ -121,8 +121,9 @@ not independent factual sources. Legacy root-level `core.md` remains supported.
 This is the `0.1.0` framework line. The public core was synchronized on
 2026-10-15, followed by Topic-first and runtime-selection updates on 2026-10-17.
 Current local experiments use additional changes. This is not yet a
-paper-reproduction release; benchmark launchers, final settings, Judge protocols
-and result bundles will be handled separately.
+verified reproduction of historical paper scores. Dataset adapters, batch
+entry points and pinned Judge adapters are available in the
+[benchmark guide](docs/benchmarks/README.md).
 
 The live example is a usage recipe, not verified support for every provider.
 See [runtime support](docs/agent-runtime-support.md). A package version here does

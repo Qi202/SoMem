@@ -76,17 +76,102 @@ is the authoritative loadable default for version `public-v1-20261030`.
 The bundled metadata records the user-selected Judge protocols: LightMem
 strictJudge for LoCoMo; Mem0 rubric-nugget for both BEAM scales; the pinned
 LightMem evaluator for LongMemEval-S. All use GPT-4o-mini and full saved answers.
-Judge source hashes/reference revision are recorded, but the implementations
-are not packaged here. A loader is not a scoring implementation.
+Judge adapters verify the source hashes/reference revision. BEAM scoring source
+is included; the LightMem sources are supplied externally as described below.
 
-**Completed:** agreed configuration, package loader, API wiring instructions,
-and offline configuration checks.
+## Batch commands
 
-**Still required for a complete paper-reproduction entry:** raw-dataset adapters,
-benchmark-wide build/QA launchers and resume handling, packaging or resolving the
-pinned evaluators, and coverage/aggregation commands. Existing framework build
-checkpoints do not substitute for a complete benchmark runner. No new full
-benchmark run or historical best-result reproduction is claimed.
+Install the framework from this checkout. Add the optional dataset dependency
+only for BEAM Arrow/Parquet input:
+
+```bash
+pip install -e ".[benchmarks]"
+mkdir -p work
+```
+
+Prepare user-supplied raw data. Supported inputs are the original LoCoMo JSON
+list, LongMemEval-S JSON list, and BEAM Arrow/Parquet or JSON/JSONL rows containing
+`chat` and `probing_questions`. Already converted BEAM conversation/QA JSON is
+also accepted. The input path selects the BEAM scale; no dataset download occurs.
+
+```bash
+somem-benchmark prepare --benchmark locomo --input /data/locomo10.json --output work/locomo.json
+somem-benchmark prepare --benchmark beam-100k --input /data/beam-100K.arrow --output work/beam100k.json
+somem-benchmark prepare --benchmark beam-1m --input /data/beam-1M.arrow --output work/beam1m.json
+somem-benchmark prepare --benchmark longmemeval-s --input /data/longmemeval_s_cleaned.json --output work/lme.json
+```
+
+Preparation checks the agreed sample/question counts; LoCoMo excludes category
+5. For an intentionally smaller input, use `--allow-subset`, which labels the
+prepared dataset as a subset. No gold answers, rubrics, categories or annotated
+evidence are included in Writer/Reader input. LongMemEval Readers additionally
+receive the question date, and its original session dates are retained.
+
+Set `SOMEM_BASE_URL` and `SOMEM_API_KEY` in the environment. Optional
+`SOMEM_WRITER_MODEL` and `SOMEM_READER_MODEL` override the default Luna6 models.
+Readers can use separate `SOMEM_READER_BASE_URL`/`SOMEM_READER_API_KEY` values.
+Then run construction and answering independently (substitute any prepared file):
+
+```bash
+somem-benchmark build --input work/beam100k.json --output work/beam100k-memory --workers 1
+somem-benchmark qa --input work/beam100k.json --memory-root work/beam100k-memory --output work/beam100k-qa --workers 1
+```
+
+Each sample has a numbered directory. Build outputs include memory and a
+completion marker; QA validates its binding to the prepared data. QA writes
+complete individual answers, a per-sample `answers.json`, and call metadata.
+Exceptions are recorded as errors and produce a nonzero exit. No empty or
+turn-limit-failed response is silently converted to an incorrect answer.
+
+### Fixed Judge adapters
+
+Set `OPENROUTER_API_KEY`. Judge model and generation settings are fixed by the
+selected protocol. No automatic scoring retries or result aggregation are added.
+For BEAM, the repository includes the unchanged hash-locked evaluator source;
+the adapter executes its original prompts and parsing functions without importing
+private experiment drivers:
+
+```bash
+somem-benchmark judge --benchmark beam-100k --answers work/beam100k-qa --output work/beam100k-judged
+```
+
+For LoCoMo, supply the original hash-pinned LightMem `llm_judge.py` described in
+[the protocol](locomo.md); the adapter calls its `evaluate_llm_judge` directly:
+
+```bash
+somem-benchmark judge --benchmark locomo --answers work/locomo-qa --locomo-judge /path/to/llm_judge.py --output work/locomo-judged
+```
+
+For LongMemEval-S, supply a LightMem source checkout at the pinned revision
+`8449d574df6bae1bdf3314a1564da65e2f37e046`. The adapter verifies all four file
+hashes, executes the original prompt dispatch/preprocessing and templates, and
+uses the original correctness expression. It does not need LightMem's full
+inference dependency stack:
+
+```bash
+somem-benchmark judge --benchmark longmemeval-s --answers work/lme-qa --lightmem-dir /path/to/LightMem --output work/lme-judged
+```
+
+A source hash mismatch stops before scoring. The adapter saves per-question
+scores and raw provider responses, including usage/returned model data. Failed
+requests or invalid strictJudge labels are pending items with a nonzero exit,
+not incorrect answers. `--answers` can also select one sample's `answers.json`.
+Full-set coverage remains the caller's responsibility when selecting saved files;
+Judge run metadata records how many answer records were supplied.
+
+### Scope
+
+The public entry now provides dataset adaptation, protocol loading, batch build,
+batch QA, and fixed Judge adapters. It deliberately adds no cross-question result
+summary or automatic resume: use your own analysis and orchestration. Every output
+file/directory must be new, so previous runs are not overwritten. Framework build
+checkpoints remain available as ordinary artifacts, but this CLI does not expose
+resume. Judge adapters read saved answers and never regenerate QA.
+
+These are current public recipes. They are not a claim that historical best
+scores have been rerun under the unified configuration. Live benchmark runs
+were not performed during this implementation. LightMem scoring source is an
+explicit external dependency; no alternate prompt is substituted if absent.
 
 Further details: [construction](construction-settings.md),
 [Reader](reader-settings.md), [LoCoMo](locomo.md), and

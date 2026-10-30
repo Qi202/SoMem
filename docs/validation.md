@@ -95,3 +95,20 @@ A wheel was built and all four protocols loaded directly from the wheel, checkin
 that package data is distributed. No live model call, dataset-wide rerun or
 benchmark Judge invocation was performed. These checks establish configuration
 and packaging behavior, not reproduced paper scores.
+
+## Minimal benchmark entry checks (2026-10-30)
+
+- 244 offline tests passed, including raw-format adapters, Reader input isolation,
+  fixed BEAM nugget scoring and fresh-output protection.
+- Existing full LoCoMo (10/1540) and converted BEAM-100K (20/400) inputs passed
+  adaptation checks. LongMemEval and raw BEAM conversion were checked on synthetic
+  format fixtures; no claim of a new full construction/QA benchmark run is made.
+- External hash-pinned LoCoMo and four-file LongMemEval sources were verified;
+  simulated responses checked strictJudge invocation/invalid-label handling and
+  LongMemEval's generic, task-specific and abstention routes.
+- The wheel includes the CLI, protocol files and exact BEAM evaluator source;
+  the BEAM scorer loads from that wheel.
+- The current paper Figure 1 PDF was copied without modification and rendered
+  to the README PNG. No paper sources or historical results were modified.
+- No live model/Judge requests were made; no aggregate report or automatic
+  benchmark resume feature was added.

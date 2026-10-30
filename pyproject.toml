@@ -13,10 +13,12 @@ requires-python = ">=3.12"
 dynamic = ["dependencies"]
 
 [project.optional-dependencies]
+benchmarks = ["datasets>=3,<5"]
 dev = ["pytest>=8,<10", "build>=1,<2"]
 
 [project.scripts]
 somem = "somem.cli:main"
+somem-benchmark = "somem.benchmark:main"
 
 [project.urls]
 Repository = "https://github.com/Qi202/SoMem"
@@ -34,4 +36,4 @@ where = ["code"]
 include = ["somem*", "src*"]
 
 [tool.setuptools.package-data]
-somem = ["protocol_data/*.json"]
+somem = ["protocol_data/*.json", "evaluation_sources/*.py"]
