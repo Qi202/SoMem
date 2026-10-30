@@ -120,3 +120,11 @@ their original license and attribution. All 246 offline tests passed. The
 LoCoMo, BEAM and LongMemEval scorers loaded from the wheel and accepted simulated
 responses without an external source directory. The CLI no longer requests
 Judge source paths. No live scoring requests were made.
+
+## Neutral BEAM snapshot metadata (2026-10-31)
+
+The uploaded BEAM snapshot now uses `beam_*` fields and a neutral filename.
+All 247 offline tests pass. Exact source-segment comparison confirms the two
+scoring prompts and two parsing/scoring functions are unchanged from the original
+hash-pinned experiment file. A wheel check verified that the new snapshot loads
+and the old filename is absent. No model calls or historical-result edits occurred.

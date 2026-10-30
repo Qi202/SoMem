@@ -123,3 +123,17 @@ def test_bundled_lme_preserves_routing_and_parser_without_external_checkout():
     assert result['prompt_name']=='longmemeval-abstention'
     assert not result['is_correct']
     assert all(r['top_p']==0.95 and r['temperature']==0 for r in client.requests)
+
+
+def test_beam_snapshot_scoring_source_matches_original_before_metadata_rename():
+    import ast
+    import hashlib
+    from importlib.resources import files
+    text = files('somem').joinpath('evaluation_sources/eval_beam_judge.py').read_text()
+    nodes = [n for n in ast.parse(text).body if
+        (isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id in
+            {'SYSTEM_PROMPT', 'JUDGE_PROMPT'} for t in n.targets)) or
+        (isinstance(n, ast.FunctionDef) and n.name in {'clamp_score', 'parse_judgment'})]
+    fingerprint = hashlib.sha256('\n\n'.join(
+        ast.get_source_segment(text, n) for n in nodes).encode()).hexdigest()
+    assert fingerprint == '8f70560928b88869e7e386c27d9ea37542c61d868858d492185ce570810a160d'

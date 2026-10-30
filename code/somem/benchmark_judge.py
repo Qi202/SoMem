@@ -12,7 +12,9 @@ from types import SimpleNamespace
 
 LOCKS = {
     'locomo': '753889df01f381980b1d96a4aab480b5ff8b0919e0e0ac7092bbf828bdfe1dc6',
+    # Original experiment source remains pinned; public snapshot renames metadata only.
     'beam': '8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81',
+    'beam_snapshot': 'dd84472748586f695fb5892e056223a286a528d7f76607395a58d387425030d0',
     'src/lightmem/memory_toolkits/memories/datasets/longmemeval.py':
         'da60e12e0ffecac357bb527768f1b8758646e8b7809eedec2e12437489bc345e',
     'src/lightmem/memory_toolkits/inference_utils/operators.py':
@@ -44,8 +46,8 @@ def source_method(text, class_name, method_name):
 
 
 def beam_functions():
-    path = files('somem').joinpath('evaluation_sources/eval_beam_mem0.py')
-    text = verified_text(path,LOCKS['beam'])
+    path = files('somem').joinpath('evaluation_sources/eval_beam_judge.py')
+    text = verified_text(path,LOCKS['beam_snapshot'])
     chosen = []
     for node in ast.parse(text).body:
         if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id in

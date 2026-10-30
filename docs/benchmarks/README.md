@@ -127,7 +127,7 @@ turn-limit-failed response is silently converted to an incorrect answer.
 
 Set `OPENROUTER_API_KEY`. Judge model and generation settings are fixed by the
 selected protocol. No automatic scoring retries or result aggregation are added.
-For BEAM, the repository includes the unchanged hash-locked evaluator source;
+For BEAM, the repository includes a hash-locked scoring snapshot with neutral field names;
 the adapter executes its original prompts and parsing functions without importing
 private experiment drivers:
 

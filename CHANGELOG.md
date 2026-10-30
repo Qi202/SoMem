@@ -36,3 +36,7 @@ it is not a claim that a corresponding package or Git tag was published.
 
 - Bundle the existing local scoring sources and remove external Judge-source
   path requirements; preserve scoring semantics, hashes, license and attribution.
+
+- Rename the public BEAM scoring snapshot and legacy metadata to neutral `beam_*`
+  names; preserve the scoring prompts and parser exactly, and retain the original
+  experiment-source hash separately from the renamed snapshot hash.

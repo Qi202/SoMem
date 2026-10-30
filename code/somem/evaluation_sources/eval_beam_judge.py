@@ -1,6 +1,6 @@
-"""Rejudge existing BEAM answers with Mem0's rubric-nugget protocol.
+"""Judge existing BEAM answers with the fixed rubric-nugget protocol.
 
-This evaluator intentionally keeps Mem0's three-level nugget score, question
+This evaluator preserves the three-level nugget score, question
 mean, and >=0.5 pass threshold.  It does not generate or modify answers.
 """
 
@@ -93,7 +93,7 @@ def aggregate(records: list[dict]) -> dict:
     by_type: dict[str, list[float]] = defaultdict(list)
     for record in questions:
         by_type[str(record.get("beam_category", "unknown"))].append(
-            float(record["mem0_beam_score"])
+            float(record["beam_score"])
         )
 
     def summary(scores: list[float]) -> dict:
@@ -106,7 +106,7 @@ def aggregate(records: list[dict]) -> dict:
         }
 
     return {
-        "overall": summary([float(r["mem0_beam_score"]) for r in questions]),
+        "overall": summary([float(r["beam_score"]) for r in questions]),
         "by_question_type": {key: summary(scores) for key, scores in sorted(by_type.items())},
     }
 
@@ -127,23 +127,23 @@ def main() -> None:
             str(record.get("question_id")): record
             for record in load_records(args.output)
             if record.get("question_id") is not None
-            and record.get("mem0_beam_judgment") is not None
+            and record.get("beam_judgment") is not None
         }
         for record in records:
             prior = previous.get(str(record.get("question_id")))
             if prior is None:
                 continue
             for key in (
-                "mem0_beam_nugget_scores",
-                "mem0_beam_score",
-                "mem0_beam_judgment",
+                "beam_nugget_scores",
+                "beam_score",
+                "beam_judgment",
             ):
                 if key in prior:
                     record[key] = prior[key]
     meta = {
         "label": args.label,
         "benchmark": "beam",
-        "protocol": "mem0-rubric-nugget",
+        "protocol": "judge",
         "judge_model": JUDGE_MODEL,
         "judge_base": JUDGE_BASE,
         "input": str(args.input.resolve()),
@@ -153,7 +153,7 @@ def main() -> None:
     for record in records:
         if record.get("question_id") == "_build_stats" or "answer" not in record:
             continue
-        if record.get("mem0_beam_judgment") is not None:
+        if record.get("beam_judgment") is not None:
             continue
         rubric = record.get("rubric") or []
         if isinstance(rubric, str):
@@ -175,9 +175,9 @@ def main() -> None:
                 "raw": text, "usage": usage,
             })
         score = statistics.mean(item["score"] for item in nugget_scores) if nugget_scores else 0.0
-        record["mem0_beam_nugget_scores"] = nugget_scores
-        record["mem0_beam_score"] = round(score, 4)
-        record["mem0_beam_judgment"] = "PASS" if score >= 0.5 else "FAIL"
+        record["beam_nugget_scores"] = nugget_scores
+        record["beam_score"] = round(score, 4)
+        record["beam_judgment"] = "PASS" if score >= 0.5 else "FAIL"
         save(records, meta, args.output)
 
     meta["aggregate"] = aggregate(records)

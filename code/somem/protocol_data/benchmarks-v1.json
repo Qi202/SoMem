@@ -208,7 +208,8 @@
         "protocol": "judge",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
         "aggregation": "mean question nugget score and PASS >= 0.5",
-        "adapter_available": true
+        "adapter_available": true,
+        "bundled_snapshot_sha256": "dd84472748586f695fb5892e056223a286a528d7f76607395a58d387425030d0"
       }
     },
     "beam-1m": {
@@ -310,7 +311,8 @@
         "protocol": "judge",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
         "aggregation": "mean question nugget score and PASS >= 0.5",
-        "adapter_available": true
+        "adapter_available": true,
+        "bundled_snapshot_sha256": "dd84472748586f695fb5892e056223a286a528d7f76607395a58d387425030d0"
       }
     },
     "longmemeval-s": {
