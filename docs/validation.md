@@ -1,6 +1,6 @@
 # Local release validation
 
-## Subsequent local alignment (2026-10-29, not yet pushed)
+## Subsequent local alignment (2026-10-29; published in 8a7bf37)
 
 Reader instructions now use the development content with SoMem naming and the
 public adapter-selection interface retained. Source parsing now indexes each
@@ -128,3 +128,29 @@ All 247 offline tests pass. Exact source-segment comparison confirms the two
 scoring prompts and two parsing/scoring functions are unchanged from the original
 hash-pinned experiment file. A wheel check verified that the new snapshot loads
 and the old filename is absent. No model calls or historical-result edits occurred.
+
+## Source newline compatibility (2026-10-31)
+
+Archive integrity comparison now normalizes expected CRLF/CR to LF to match
+Python universal-newline decoding. It does not rewrite archived files. Fourteen
+new cases cover legacy/provider IDs, LF/CRLF/CR, unchanged archive bytes, and
+rejection of changed, missing, added or internally re-spaced text. All 261
+offline tests passed. No live API requests or historical archive edits occurred.
+
+## Automatic Git commit scope (2026-10-31)
+
+Automatic commits are limited to the known memory paths. Unrelated staged files
+and their unstaged content remain untouched. Eight new temporary-repository
+regressions cover root/nested workspaces, partially staged unrelated content, no
+memory changes, first commits, staged/unstaged directory deletions, hook failure
+and non-repository operation. All 269 offline tests passed. Tests did not create
+commits in the user workspace. This release includes the commit-scope and
+newline repairs.
+
+## Manual transaction source attribution (2026-10-31)
+
+New manual imports use the `transaction` namespace rather than claiming an
+inference provider. Four new cases verify deterministic IDs, source/citation
+resolution, duplicate-free reimport under the new namespace, and preservation
+of existing legacy archives and links. All 273 offline tests passed. No model
+requests, migrations or historical archive rewrites were performed.

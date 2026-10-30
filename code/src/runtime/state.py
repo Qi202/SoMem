@@ -76,32 +76,52 @@ class RuntimeStateStore:
             )
         except subprocess.CalledProcessError:
             return None
-        candidates = [
-            value for value in (
-                "core.md", "recent_events.jsonl",
-                "relations.json", "sources", "topics", "timeline",
-            )
-            if (self.memory_dir / value).exists()
-        ]
+        memory_paths = (
+            "core.md", "recent_events.jsonl", "relations.json",
+            "sources", "topics", "timeline",
+        )
+        tracked = subprocess.check_output(
+            ["git", "ls-files", "--cached", "-z", "--", *memory_paths],
+            cwd=self.memory_dir, text=True, encoding="utf-8", errors="replace",
+        ).split("\0")
+        to_stage = [value for value in memory_paths
+                    if (self.memory_dir / value).exists() or any(
+                        path == value or path.startswith(value + "/")
+                        for path in tracked)]
+        tracked.extend(subprocess.check_output(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=D",
+             "--relative", "-z", "--", *memory_paths],
+            cwd=self.memory_dir, text=True, encoding="utf-8", errors="replace",
+        ).split("\0"))
+        # Keep tracked deletions even when a whole memory directory is gone.
+        candidates = [value for value in memory_paths
+                      if (self.memory_dir / value).exists() or any(
+                          path == value or path.startswith(value + "/")
+                          for path in tracked)]
         if not candidates:
             return None
-        subprocess.run(
-            ["git", "add", "-A", "--", *candidates],
-            cwd=self.memory_dir,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
+        if to_stage:
+            subprocess.run(
+                ["git", "add", "-A", "--", *to_stage],
+                cwd=self.memory_dir,
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
         changed = subprocess.run(
-            ["git", "diff", "--cached", "--quiet"],
+            ["git", "diff", "--cached", "--quiet", "--", *candidates],
             cwd=self.memory_dir,
-        ).returncode != 0
-        if not changed:
+        )
+        if changed.returncode not in (0, 1):
+            changed.check_returncode()
+        if changed.returncode == 0:
             return None
         subprocess.run(
-            ["git", "commit", "-m", message],
+            # --only commits these worktree paths, leaving other index entries
+            # (including partially staged user files) out of this commit.
+            ["git", "commit", "--only", "-m", message, "--", *candidates],
             cwd=self.memory_dir,
             check=True,
             capture_output=True,

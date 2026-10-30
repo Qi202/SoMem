@@ -73,6 +73,9 @@ def assert_session_sources(root: Path, sessions: list[dict[str, Any]]) -> None:
                     ('<a id="' + record).rstrip()
                     for record in re.split(r'(?m)^<a id="', cache[relative])[1:]
                 }
+            # read_text applies universal-newline decoding. Compare against the
+            # same representation without rewriting archives or relaxing text checks.
+            expected = expected.replace("\r\n", "\n").replace("\r", "\n")
             if expected.rstrip() not in parsed[relative]:
                 errors.append(ref)
     if errors:

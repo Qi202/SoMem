@@ -40,3 +40,12 @@ it is not a claim that a corresponding package or Git tag was published.
 - Rename the public BEAM scoring snapshot and legacy metadata to neutral `beam_*`
   names; preserve the scoring prompts and parser exactly, and retain the original
   experiment-source hash separately from the renamed snapshot hash.
+
+- Fix Source integrity comparisons for CRLF/CR input while keeping strict content
+  checks and leaving archived files untouched.
+
+- Limit automatic Git commits to memory paths; preserve unrelated index entries
+  and handle tracked memory deletions, including already staged deletions.
+
+- Use the neutral `transaction` namespace for new manual source imports; keep
+  existing archived source IDs and citations unchanged.

@@ -17,8 +17,8 @@ repository.
 Subsequent local alignment uses development Reader instructions and complete
 Source-message parsing, while retaining SoMem naming and the public adapter
 selection. BM25 cache version 5 rebuilds older indexes. These changes were
-published in commit `8a7bf37`. Source-archive newline compatibility is a separate
-remaining difference.
+published in commit `8a7bf37`. Source-archive newline compatibility has now been repaired and verified
+with offline regression tests.
 The synthetic Writer → memory → Reader example passed locally with GPT-4o-mini
 through OpenRouter; its scope and unexercised paths are recorded in validation.
 
@@ -35,9 +35,9 @@ through OpenRouter; its scope and unexercised paths are recorded in validation.
 | Results and provenance bundle | **P1** | Deferred until tables and result selection are final |
 | CI, packaging and environment snapshot | P1 | Baseline 304291f passed GitHub CI; current protocol/Core changes passed 238 local offline tests and a wheel protocol-loading check |
 | Provider compatibility and platform matrix | P1 | One GPT-4o-mini/OpenRouter example verified; additional providers, platforms, semantic citation coverage and unexercised management paths remain |
-| Source-archive newline compatibility | P1 | Remaining CRLF normalization difference; separate compatibility repair |
-| Limit automatic Git commits to memory files | P1 | Confirmed unrelated staged-file inclusion; regression and repair pending |
-| Correct transaction source attribution | P1 | Confirmed manual imports receive claude-code source IDs; code and documentation repair pending |
+| Source-archive newline compatibility | P1 | Fixed: LF/CRLF/CR compare consistently, content integrity remains strict; 14 new regression cases and 261 total tests passed |
+| Limit automatic Git commits to memory files | P1 | Fixed: path-scoped commits preserve unrelated staged/unstaged changes; 8 new regressions and 269 total tests passed |
+| Correct transaction source attribution | P1 | Fixed: new manual imports use transaction IDs; existing IDs/citations preserved; code/docs and 4 regressions updated |
 | Citation metadata and repository About/topics | P1 | Final paper/author metadata and remote update deferred |
 | Short video, notebook and broader integrations | P2 | Future work |
 

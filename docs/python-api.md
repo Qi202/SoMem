@@ -27,7 +27,11 @@ Writes use `workspace.update(base_revision=..., patch=..., sources=...,
 git_commit="off")`. Supply a unified diff over Topic files; temporary source and
 block labels resolve to runtime IDs on commit. The executable
 [offline demo](../examples/offline_demo.py) shows the full patch/citation syntax.
-Semantic search additionally needs the embedding backend and model weights.
+New manual-import source IDs use `transaction/<thread>/<message>`; this is an
+import namespace, not a model attribution. Existing source IDs and links are
+preserved. Reimporting the same source bundle under this namespace retains its
+content-derived IDs. Semantic search additionally needs the embedding backend
+and model weights.
 
 `TransactionResult` contains `revision`, `source_ids`, `block_ids`, `evidence_ids`,
 `changed_files`, `memory_committed` and Git metadata. Rejections raise
