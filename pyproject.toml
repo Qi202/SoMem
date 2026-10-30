@@ -32,3 +32,6 @@ package-dir = { "" = "code" }
 [tool.setuptools.packages.find]
 where = ["code"]
 include = ["somem*", "src*"]
+
+[tool.setuptools.package-data]
+somem = ["protocol_data/*.json"]

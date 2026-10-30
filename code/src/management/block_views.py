@@ -134,8 +134,21 @@ def _rmtree_with_retry(path: Path, *, ignore_errors: bool = False) -> None:
 
 
 class BlockViewsMixin:
+    def _require_core_file(self) -> Path:
+        # Pin the location to committed memory: deleting nested Core must not
+        # silently switch the candidate to a newly created legacy root file.
+        relative = core_file(self.memory_dir).relative_to(self.memory_dir)
+        core = self.stage_dir / relative
+        if not core.is_file() or core.is_symlink():
+            raise ValueError(
+                f"Core file must remain at {relative.as_posix()}, even when empty. "
+                "Move facts with their IDs and evidence into Topics before "
+                "clearing Core; do not delete or move the file."
+            )
+        return core
+
     def _synchronize(self) -> str:
-        core = core_file(self.stage_dir)
+        core = self._require_core_file()
         if core.parent.name == "topics" and (self.stage_dir / "core.md").exists():
             raise ValueError("Core belongs in topics/core.md for this workspace; do not create root core.md")
         if core.exists():
@@ -376,6 +389,7 @@ class BlockViewsMixin:
         count: int,
         noun: str,
     ) -> str:
+        self._require_core_file()
         backup = self.memory_dir / f"{runtime_dir(self.memory_dir).name}-block-backup"
         if backup.exists():
             raise RuntimeError(f"Unresolved installation backup requires recovery: {backup}")

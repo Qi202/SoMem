@@ -15,3 +15,7 @@ dist/
 .memory/
 demo-memory/
 live-demo-memory/
+
+# Publish protocol documentation, not benchmark datasets.
+!docs/benchmarks/
+!docs/benchmarks/*.md

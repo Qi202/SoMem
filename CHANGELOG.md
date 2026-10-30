@@ -20,3 +20,9 @@ The public snapshot includes Topic-first retrieval guidance, selectable runtime
 adapters, validated document operations, workspace tools and selected offline
 tests. The version appeared in package metadata before this documentation work;
 it is not a claim that a corresponding package or Git tag was published.
+
+## Public benchmark protocol configuration (2026-10-30)
+
+- Add four versioned, loadable construction/Reader recipes with explicit defaults.
+- Keep Core files in place while allowing evidence-preserving moves into Topics.
+- Document benchmark best scores and the remaining dataset-runner/Judge work.

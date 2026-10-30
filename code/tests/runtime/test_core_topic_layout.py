@@ -75,3 +75,73 @@ def test_core_citations_commit_with_source_and_survive_reload(tmp_path):
     resumed._synchronize()
     assert (tmp_path / 'topics/core.md').read_text() == core
     assert not (tmp_path / 'core.md').exists()
+
+
+@pytest.mark.parametrize('legacy', [False, True])
+@pytest.mark.parametrize('operation', ['remove', 'move'])
+def test_core_file_cannot_be_removed_or_moved(tmp_path, legacy, operation):
+    if legacy:
+        (tmp_path / 'core.md').write_text('')
+    workspace = MemoryWorkspace(tmp_path)
+    relative = core_file(tmp_path).relative_to(tmp_path).as_posix()
+    backend = WorkspaceToolBackend(workspace.stage_dir)
+    with pytest.raises(WorkspaceToolError, match='Core file must remain'):
+        if operation == 'remove':
+            backend.remove(relative)
+        else:
+            backend.move(relative, 'topics/old-core.md')
+    assert (workspace.stage_dir / relative).is_file()
+
+
+@pytest.mark.parametrize('legacy', [False, True])
+@pytest.mark.parametrize('relocate', [False, True])
+def test_commit_rejects_core_deletion_even_when_bypassing_tools(tmp_path, legacy, relocate):
+    from src.management.transaction import committed_baseline, install_state
+    if legacy:
+        (tmp_path / 'core.md').write_text('')
+    workspace = MemoryWorkspace(tmp_path)
+    baseline = committed_baseline(workspace)
+    relative = core_file(tmp_path).relative_to(tmp_path)
+    (workspace.stage_dir / relative).unlink()
+    if relocate:
+        other = workspace.stage_dir / ('topics/core.md' if legacy else 'core.md')
+        other.parent.mkdir(parents=True, exist_ok=True)
+        other.write_text('')
+    with pytest.raises(ValueError, match='Core file must remain'):
+        install_state(workspace, *baseline)
+    assert (tmp_path / relative).is_file()
+
+
+@pytest.mark.parametrize('empty', ['', '# Core\n'])
+def test_core_facts_can_move_to_topic_then_core_can_be_empty(tmp_path, empty):
+    from src.management.transaction import committed_baseline, install_state
+    test_core_citations_commit_with_source_and_survive_reload(tmp_path)
+    workspace = MemoryWorkspace(tmp_path)
+    baseline = committed_baseline(workspace)
+    backend = WorkspaceToolBackend(workspace.stage_dir)
+    original = (workspace.stage_dir / 'topics/core.md').read_text()
+    # Clearing without preserving the existing fact is rejected immediately.
+    with pytest.raises(WorkspaceToolError, match='remove existing memory block ID'):
+        backend.write('topics/core.md', empty)
+    backend.read('topics/core.md')
+    backend.write('topics/preferences.md', original.replace('# Core', '# Preferences', 1))
+    backend.write('topics/core.md', empty)
+    install_state(workspace, *baseline)
+    assert (tmp_path / 'topics/core.md').is_file()
+    assert not (tmp_path / 'topics/core.md').read_text().replace('# Core', '').strip()
+    topic = (tmp_path / 'topics/preferences.md').read_text()
+    assert 'prefers tea' in topic and '../sources/' in topic
+    resumed = MemoryWorkspace(tmp_path)
+    assert not (resumed.stage_dir / 'topics/core.md').read_text().replace('# Core', '').strip()
+    assert 'prefers tea' in (resumed.stage_dir / 'topics/preferences.md').read_text()
+
+
+def test_commit_rejects_lost_core_information_even_if_file_remains(tmp_path):
+    from src.management.transaction import committed_baseline, install_state
+    test_core_citations_commit_with_source_and_survive_reload(tmp_path)
+    workspace = MemoryWorkspace(tmp_path)
+    baseline = committed_baseline(workspace)
+    (workspace.stage_dir / 'topics/core.md').write_text('')
+    with pytest.raises(ValueError, match='block ID must not be removed'):
+        install_state(workspace, *baseline)
+    assert 'prefers tea' in (tmp_path / 'topics/core.md').read_text()

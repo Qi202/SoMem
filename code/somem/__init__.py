@@ -10,6 +10,7 @@ from importlib import import_module
 from typing import Any
 
 _EXPORTS = {
+    "load_benchmark_protocol": ("somem.protocols", "load_benchmark_protocol"),
     "BuildConfig": ("src.build", "BuildConfig"),
     "build_memory": ("src.build", "build_memory"),
     "MemoryWorkspace": ("src.management", "MemoryWorkspace"),

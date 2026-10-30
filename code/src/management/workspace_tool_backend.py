@@ -326,9 +326,19 @@ class WorkspaceToolBackend:
             result.update({"next_match_offset": None, "truncated": False})
         return result
 
+    def _guard_core_file(self, target: Path) -> None:
+        core = core_file(self.root).resolve()
+        if target == core or target in core.parents:
+            raise WorkspaceToolError(
+                "Core file must remain in place, even when empty. Move its facts "
+                "with their IDs and evidence into Topic files first, then use "
+                "Write or Edit to clear Core; do not Move or Remove the file."
+            )
+
     def move(self, source: str, destination: str) -> dict[str, Any]:
         source_path = self._path(source, writable=True)
         destination_path = self._path(destination, writable=True)
+        self._guard_core_file(source_path)
         if not source_path.exists():
             raise WorkspaceToolError(f"path not found: {source}")
         if destination_path.exists():
@@ -339,6 +349,7 @@ class WorkspaceToolBackend:
 
     def remove(self, path: str) -> dict[str, Any]:
         target = self._path(path, writable=True)
+        self._guard_core_file(target)
         if not target.exists():
             raise WorkspaceToolError(f"path not found: {path}")
         if not self.unchecked:

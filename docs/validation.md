@@ -86,3 +86,12 @@ reproduction, hosted MCP integrations, Linux/Windows execution, GPU performance,
 or GitHub Actions execution. The workflow is prepared locally; an observed local
 pass is not a remote CI result. The live example is a recipe, not a reproduced
 paper run. No release/tag/package publication was performed.
+
+## Protocol publication checks (2026-10-30)
+
+All 238 offline tests passed, including Core file preservation, evidence-preserving
+Core-to-Topic moves, and four validated protocol configurations wired into Runtime.
+A wheel was built and all four protocols loaded directly from the wheel, checking
+that package data is distributed. No live model call, dataset-wide rerun or
+benchmark Judge invocation was performed. These checks establish configuration
+and packaging behavior, not reproduced paper scores.

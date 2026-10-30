@@ -17,6 +17,20 @@ a Reader tools to find and verify relevant evidence.
 - **Flexible reading:** lexical and semantic retrieval, source inspection, and separate Writer/Reader models sharing one workspace.
 - **Agent integration:** Python API, workspace CLI, and stdio MCP server with six memory tools and optional workspace layers.
 
+## Benchmark performance
+
+Best observed results across evaluated configurations on the complete benchmark sets:
+
+| Benchmark | Metric | Best score (%) | Questions |
+|---|---|---:|---:|
+| LoCoMo | LJ accuracy | **93.25** | 1,540 |
+| LongMemEval-S | Accuracy | **90.20** | 500 |
+| BEAM-100K | Mean nugget score | **61.19** | 400 |
+| BEAM-1M | Mean nugget score | **63.24** | 700 |
+
+All scores use GPT-4o-mini judging. BEAM scores are mean rubric scores multiplied
+by 100; the BEAM-100K result uses the w/o Derived configuration.
+
 ## Install
 
 Use Python **3.12+**. From a source checkout:
@@ -93,6 +107,9 @@ not independent factual sources. Legacy root-level `core.md` remains supported.
 | [Getting started](docs/getting-started.md) | Installation, offline/live examples, troubleshooting |
 | [Python API](docs/python-api.md) | Transactions, construction, reading and return values |
 | [Configuration](docs/configuration.md) | Credentials, models, effort and budgets |
+| [Loadable benchmark protocols](docs/benchmarks/README.md) | Four public recipes, Python loader and reproduction status |
+| [Benchmark Reader settings](docs/benchmarks/reader-settings.md) | Split search, directory scope and per-dataset turn budgets |
+| [LoCoMo protocol](docs/benchmarks/locomo.md) | Confirmed dataset, Writer/Reader settings, scoring and reproduction workflow |
 | [CLI and MCP](docs/mcp.md) | Commands, client configuration, tools and layers |
 | [Runtime support](docs/agent-runtime-support.md) | Adapters and validation boundaries |
 | [Release scope](docs/release-scope.md) | Public snapshot and deferred experiment material |
@@ -117,4 +134,4 @@ SoMem is distributed under the [MIT License](LICENSE). Dependencies retain their
 own licenses.
 
 Until paper metadata is finalized, cite the repository URL and the commit used.
-No paper identifier or performance claim is inferred here.
+Paper citation metadata will be added when finalized.

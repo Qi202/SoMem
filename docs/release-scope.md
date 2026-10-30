@@ -16,8 +16,9 @@ repository.
 
 Subsequent local alignment uses development Reader instructions and complete
 Source-message parsing, while retaining SoMem naming and the public adapter
-selection. BM25 cache version 5 rebuilds older indexes. These changes are not yet
-pushed. Source-archive newline compatibility is a separate remaining difference.
+selection. BM25 cache version 5 rebuilds older indexes. These changes were
+published in commit `8a7bf37`. Source-archive newline compatibility is a separate
+remaining difference.
 The synthetic Writer → memory → Reader example passed locally with GPT-4o-mini
 through OpenRouter; its scope and unexercised paths are recorded in validation.
 
@@ -27,12 +28,12 @@ through OpenRouter; its scope and unexercised paths are recorded in validation.
 |---|---|---|
 | Installation, README and API/CLI/MCP guides | P0 | Implemented; local release checks passed |
 | Offline transaction/retrieval example | P0 | Implemented; validated by release checks |
-| Live conversation → memory → answer example | P0 | Passed locally with GPT-4o-mini/OpenRouter: exact Source preservation, Core writes, BM25 retrieval, correct answer and scratch validation; not yet pushed |
+| Live conversation → memory → answer example | P0 | Passed locally with GPT-4o-mini/OpenRouter: exact Source preservation, Core writes, BM25 retrieval, correct answer and scratch validation |
 | License | P0 | MIT confirmed and added, including distribution metadata |
-| Select and locally align the public framework version | P0 | Complete locally: SoMem naming, public adapters, development Reader instructions and full-message Source parsing; 222 tests passed; not yet pushed |
-| Paper reproduction entry points | **P1** | Deferred until experimental structure/settings are final |
+| Select and locally align the public framework version | P0 | Complete locally: SoMem naming, public adapters, development Reader instructions and full-message Source parsing; 222 tests passed |
+| Paper reproduction entry points | **P1** | [Four protocols and package loader](benchmarks/README.md) implemented; dataset adapters, benchmark launchers and pinned Judge integration remain pending |
 | Results and provenance bundle | **P1** | Deferred until tables and result selection are final |
-| CI, packaging and environment snapshot | P1 | Published baseline 304291f passed GitHub CI; subsequent local changes have not been pushed |
+| CI, packaging and environment snapshot | P1 | Baseline 304291f passed GitHub CI; current protocol/Core changes passed 238 local offline tests and a wheel protocol-loading check |
 | Provider compatibility and platform matrix | P1 | One GPT-4o-mini/OpenRouter example verified; additional providers, platforms, semantic citation coverage and unexercised management paths remain |
 | Source-archive newline compatibility | P1 | Remaining CRLF normalization difference; separate compatibility repair |
 | Limit automatic Git commits to memory files | P1 | Confirmed unrelated staged-file inclusion; regression and repair pending |

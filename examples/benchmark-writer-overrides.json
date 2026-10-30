@@ -1,0 +1,80 @@
+{
+  "locomo": {
+    "model": "gpt-6-luna",
+    "memory_config": {
+      "max_turns": 120,
+      "luna_topic_routing_protocol_enabled": true,
+      "luna_core_structural_repair_enabled": true,
+      "luna_strict_validation_repair_enabled": true,
+      "core_max_tokens": 4000,
+      "core_repair_target_tokens": 3600,
+      "recent_limit": 50
+    },
+    "build_config": {
+      "verify_writes": true,
+      "verify_every_sessions": 1,
+      "local_reorg_every_sessions": 2,
+      "writer_input_token_cap": 15000,
+      "final_manage": true
+    }
+  },
+  "beam-100k": {
+    "model": "gpt-6-luna",
+    "memory_config": {
+      "max_turns": 120,
+      "luna_topic_routing_protocol_enabled": true,
+      "luna_core_structural_repair_enabled": true,
+      "luna_strict_validation_repair_enabled": true,
+      "core_max_tokens": 4000,
+      "core_repair_target_tokens": 3600,
+      "recent_limit": 50
+    },
+    "build_config": {
+      "verify_writes": true,
+      "verify_every_sessions": 1,
+      "local_reorg_every_sessions": 2,
+      "final_manage": true,
+      "writer_input_token_cap": 32768
+    }
+  },
+  "beam-1m": {
+    "model": "gpt-6-luna",
+    "memory_config": {
+      "max_turns": 120,
+      "core_max_tokens": 4000,
+      "core_repair_target_tokens": 3600,
+      "luna_topic_routing_protocol_enabled": true,
+      "luna_core_structural_repair_enabled": true,
+      "luna_strict_validation_repair_enabled": true,
+      "recent_limit": 50
+    },
+    "build_config": {
+      "verify_writes": true,
+      "verify_every_sessions": 1,
+      "local_reorg_every_sessions": 2,
+      "final_manage": true,
+      "writer_input_token_cap": 32768
+    }
+  },
+  "longmemeval-s": {
+    "model": "gpt-6-luna",
+    "memory_config": {
+      "max_turns": 120,
+      "luna_topic_routing_protocol_enabled": true,
+      "luna_core_structural_repair_enabled": true,
+      "luna_strict_validation_repair_enabled": true,
+      "core_max_tokens": 4000,
+      "core_repair_target_tokens": 3600,
+      "recent_limit": 50
+    },
+    "build_config": {
+      "verify_writes": true,
+      "verify_every_sessions": 1,
+      "local_reorg_every_sessions": 2,
+      "final_manage": true,
+      "session_batch": 1,
+      "writer_input_token_cap": null,
+      "calibration_path": null
+    }
+  }
+}

@@ -1,0 +1,416 @@
+{
+  "version": "public-v1-20261030",
+  "benchmarks": {
+    "locomo": {
+      "questions": 1540,
+      "build": {
+        "session_batch": 1,
+        "calibration_path": null,
+        "writer_input_token_cap": 15000,
+        "local_reorg_every_sessions": 2,
+        "verify_writes": true,
+        "verify_every_sessions": 1,
+        "final_manage": true,
+        "resume_frozen_batch_plan": false,
+        "allowed_previous_writer_protocol_sha256": null,
+        "memory_config": {
+          "core_max_tokens": 4000,
+          "core_capacity_limit_enabled": true,
+          "core_repair_target_tokens": 3600,
+          "core_repair_max_checks": 8,
+          "core_repair_max_trajectories": 2,
+          "core_repair_stagnation_limit": 2,
+          "core_capacity_repair_enabled": true,
+          "luna_topic_routing_protocol_enabled": true,
+          "luna_core_capacity_prompt_enabled": false,
+          "luna_core_structural_repair_enabled": true,
+          "luna_core_structural_repair_max_trajectories": 2,
+          "luna_strict_validation_repair_enabled": true,
+          "validation_diagnostic_aggregation_enabled": false,
+          "unchecked_writer_commits": false,
+          "repair_cross_category_enabled": false,
+          "generic_repair_max_trajectories": 3,
+          "luna_optional_maintenance_rejection_noop_enabled": false,
+          "writer_shell_examples": false,
+          "writer_tool_output_max_chars": null,
+          "recent_limit": 50,
+          "writer_stagnation_limit": 8,
+          "tool_failure_recovery_enabled": false,
+          "max_turns": 120,
+          "max_budget_usd": null,
+          "shell_backend": "auto"
+        }
+      },
+      "query": {
+        "max_turns": 20,
+        "max_budget_usd": null,
+        "verify_sources": true,
+        "search_tools": "split",
+        "structured_reader_enabled": false,
+        "memory_components": [
+          "sources",
+          "topics",
+          "core",
+          "timeline",
+          "recent",
+          "relations"
+        ],
+        "evidence_ledger_enabled": false,
+        "evidence_ledger_max_entries": 24,
+        "reasoning_ledger_enabled": false,
+        "retrieval_plan_enabled": false,
+        "pipeline_enabled": false,
+        "pipeline_version": "p0-v2",
+        "pipeline_evidence_packet_enabled": false,
+        "pipeline_evidence_gate_enabled": false,
+        "pipeline_supplement_enabled": false,
+        "reflective_retrieval_enabled": false,
+        "adaptive_workspace_enabled": false,
+        "claim_evidence_state_enabled": false,
+        "claim_evidence_loop_enabled": false,
+        "claim_evidence_loop_initial_batch_size": 2,
+        "claim_evidence_loop_initial_organizer_enabled": true,
+        "claim_evidence_loop_event_guidance_enabled": false
+      },
+      "writer": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "reader": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "retrieval": {
+        "prompt": "current framework Topic-first",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "path_prefix": "optional per search call"
+      },
+      "answer": {
+        "field": "answer",
+        "compression": false,
+        "dual_fields": false
+      },
+      "judge": {
+        "model": "openai/gpt-4o-mini",
+        "temperature": 0,
+        "answer_input": "complete answer",
+        "implementation_packaged": false,
+        "protocol": "LightMem strictJudge",
+        "sha256": "753889df01f381980b1d96a4aab480b5ff8b0919e0e0ac7092bbf828bdfe1dc6",
+        "categories": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "aggregation": "micro accuracy"
+      }
+    },
+    "beam-100k": {
+      "questions": 400,
+      "build": {
+        "session_batch": 1,
+        "calibration_path": null,
+        "writer_input_token_cap": 32768,
+        "local_reorg_every_sessions": 2,
+        "verify_writes": true,
+        "verify_every_sessions": 1,
+        "final_manage": true,
+        "resume_frozen_batch_plan": false,
+        "allowed_previous_writer_protocol_sha256": null,
+        "memory_config": {
+          "core_max_tokens": 4000,
+          "core_capacity_limit_enabled": true,
+          "core_repair_target_tokens": 3600,
+          "core_repair_max_checks": 8,
+          "core_repair_max_trajectories": 2,
+          "core_repair_stagnation_limit": 2,
+          "core_capacity_repair_enabled": true,
+          "luna_topic_routing_protocol_enabled": true,
+          "luna_core_capacity_prompt_enabled": false,
+          "luna_core_structural_repair_enabled": true,
+          "luna_core_structural_repair_max_trajectories": 2,
+          "luna_strict_validation_repair_enabled": true,
+          "validation_diagnostic_aggregation_enabled": false,
+          "unchecked_writer_commits": false,
+          "repair_cross_category_enabled": false,
+          "generic_repair_max_trajectories": 3,
+          "luna_optional_maintenance_rejection_noop_enabled": false,
+          "writer_shell_examples": false,
+          "writer_tool_output_max_chars": null,
+          "recent_limit": 50,
+          "writer_stagnation_limit": 8,
+          "tool_failure_recovery_enabled": false,
+          "max_turns": 120,
+          "max_budget_usd": null,
+          "shell_backend": "auto"
+        }
+      },
+      "query": {
+        "max_turns": 120,
+        "max_budget_usd": null,
+        "verify_sources": true,
+        "search_tools": "split",
+        "structured_reader_enabled": false,
+        "memory_components": [
+          "sources",
+          "topics",
+          "core",
+          "timeline",
+          "recent",
+          "relations"
+        ],
+        "evidence_ledger_enabled": false,
+        "evidence_ledger_max_entries": 24,
+        "reasoning_ledger_enabled": false,
+        "retrieval_plan_enabled": false,
+        "pipeline_enabled": false,
+        "pipeline_version": "p0-v2",
+        "pipeline_evidence_packet_enabled": false,
+        "pipeline_evidence_gate_enabled": false,
+        "pipeline_supplement_enabled": false,
+        "reflective_retrieval_enabled": false,
+        "adaptive_workspace_enabled": false,
+        "claim_evidence_state_enabled": false,
+        "claim_evidence_loop_enabled": false,
+        "claim_evidence_loop_initial_batch_size": 2,
+        "claim_evidence_loop_initial_organizer_enabled": true,
+        "claim_evidence_loop_event_guidance_enabled": false
+      },
+      "writer": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "reader": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "retrieval": {
+        "prompt": "current framework Topic-first",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "path_prefix": "optional per search call"
+      },
+      "answer": {
+        "field": "answer",
+        "compression": false,
+        "dual_fields": false
+      },
+      "judge": {
+        "model": "openai/gpt-4o-mini",
+        "temperature": 0,
+        "answer_input": "complete answer",
+        "implementation_packaged": false,
+        "protocol": "Mem0 rubric-nugget",
+        "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
+        "aggregation": "mean question nugget score and PASS >= 0.5"
+      }
+    },
+    "beam-1m": {
+      "questions": 700,
+      "build": {
+        "session_batch": 1,
+        "calibration_path": null,
+        "writer_input_token_cap": 32768,
+        "local_reorg_every_sessions": 2,
+        "verify_writes": true,
+        "verify_every_sessions": 1,
+        "final_manage": true,
+        "resume_frozen_batch_plan": false,
+        "allowed_previous_writer_protocol_sha256": null,
+        "memory_config": {
+          "core_max_tokens": 4000,
+          "core_capacity_limit_enabled": true,
+          "core_repair_target_tokens": 3600,
+          "core_repair_max_checks": 8,
+          "core_repair_max_trajectories": 2,
+          "core_repair_stagnation_limit": 2,
+          "core_capacity_repair_enabled": true,
+          "luna_topic_routing_protocol_enabled": true,
+          "luna_core_capacity_prompt_enabled": false,
+          "luna_core_structural_repair_enabled": true,
+          "luna_core_structural_repair_max_trajectories": 2,
+          "luna_strict_validation_repair_enabled": true,
+          "validation_diagnostic_aggregation_enabled": false,
+          "unchecked_writer_commits": false,
+          "repair_cross_category_enabled": false,
+          "generic_repair_max_trajectories": 3,
+          "luna_optional_maintenance_rejection_noop_enabled": false,
+          "writer_shell_examples": false,
+          "writer_tool_output_max_chars": null,
+          "recent_limit": 50,
+          "writer_stagnation_limit": 8,
+          "tool_failure_recovery_enabled": false,
+          "max_turns": 120,
+          "max_budget_usd": null,
+          "shell_backend": "auto"
+        }
+      },
+      "query": {
+        "max_turns": 120,
+        "max_budget_usd": null,
+        "verify_sources": true,
+        "search_tools": "split",
+        "structured_reader_enabled": false,
+        "memory_components": [
+          "sources",
+          "topics",
+          "core",
+          "timeline",
+          "recent",
+          "relations"
+        ],
+        "evidence_ledger_enabled": false,
+        "evidence_ledger_max_entries": 24,
+        "reasoning_ledger_enabled": false,
+        "retrieval_plan_enabled": false,
+        "pipeline_enabled": false,
+        "pipeline_version": "p0-v2",
+        "pipeline_evidence_packet_enabled": false,
+        "pipeline_evidence_gate_enabled": false,
+        "pipeline_supplement_enabled": false,
+        "reflective_retrieval_enabled": false,
+        "adaptive_workspace_enabled": false,
+        "claim_evidence_state_enabled": false,
+        "claim_evidence_loop_enabled": false,
+        "claim_evidence_loop_initial_batch_size": 2,
+        "claim_evidence_loop_initial_organizer_enabled": true,
+        "claim_evidence_loop_event_guidance_enabled": false
+      },
+      "writer": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "reader": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "retrieval": {
+        "prompt": "current framework Topic-first",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "path_prefix": "optional per search call"
+      },
+      "answer": {
+        "field": "answer",
+        "compression": false,
+        "dual_fields": false
+      },
+      "judge": {
+        "model": "openai/gpt-4o-mini",
+        "temperature": 0,
+        "answer_input": "complete answer",
+        "implementation_packaged": false,
+        "protocol": "Mem0 rubric-nugget",
+        "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
+        "aggregation": "mean question nugget score and PASS >= 0.5"
+      }
+    },
+    "longmemeval-s": {
+      "questions": 500,
+      "build": {
+        "session_batch": 1,
+        "calibration_path": null,
+        "writer_input_token_cap": null,
+        "local_reorg_every_sessions": 2,
+        "verify_writes": true,
+        "verify_every_sessions": 1,
+        "final_manage": true,
+        "resume_frozen_batch_plan": false,
+        "allowed_previous_writer_protocol_sha256": null,
+        "memory_config": {
+          "core_max_tokens": 4000,
+          "core_capacity_limit_enabled": true,
+          "core_repair_target_tokens": 3600,
+          "core_repair_max_checks": 8,
+          "core_repair_max_trajectories": 2,
+          "core_repair_stagnation_limit": 2,
+          "core_capacity_repair_enabled": true,
+          "luna_topic_routing_protocol_enabled": true,
+          "luna_core_capacity_prompt_enabled": false,
+          "luna_core_structural_repair_enabled": true,
+          "luna_core_structural_repair_max_trajectories": 2,
+          "luna_strict_validation_repair_enabled": true,
+          "validation_diagnostic_aggregation_enabled": false,
+          "unchecked_writer_commits": false,
+          "repair_cross_category_enabled": false,
+          "generic_repair_max_trajectories": 3,
+          "luna_optional_maintenance_rejection_noop_enabled": false,
+          "writer_shell_examples": false,
+          "writer_tool_output_max_chars": null,
+          "recent_limit": 50,
+          "writer_stagnation_limit": 8,
+          "tool_failure_recovery_enabled": false,
+          "max_turns": 120,
+          "max_budget_usd": null,
+          "shell_backend": "auto"
+        }
+      },
+      "query": {
+        "max_turns": 120,
+        "max_budget_usd": null,
+        "verify_sources": true,
+        "search_tools": "split",
+        "structured_reader_enabled": false,
+        "memory_components": [
+          "sources",
+          "topics",
+          "core",
+          "timeline",
+          "recent",
+          "relations"
+        ],
+        "evidence_ledger_enabled": false,
+        "evidence_ledger_max_entries": 24,
+        "reasoning_ledger_enabled": false,
+        "retrieval_plan_enabled": false,
+        "pipeline_enabled": false,
+        "pipeline_version": "p0-v2",
+        "pipeline_evidence_packet_enabled": false,
+        "pipeline_evidence_gate_enabled": false,
+        "pipeline_supplement_enabled": false,
+        "reflective_retrieval_enabled": false,
+        "adaptive_workspace_enabled": false,
+        "claim_evidence_state_enabled": false,
+        "claim_evidence_loop_enabled": false,
+        "claim_evidence_loop_initial_batch_size": 2,
+        "claim_evidence_loop_initial_organizer_enabled": true,
+        "claim_evidence_loop_event_guidance_enabled": false
+      },
+      "writer": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "reader": {
+        "model": "gpt-6-luna",
+        "reasoning_effort": "none",
+        "force_final_at_max_turns": false
+      },
+      "retrieval": {
+        "prompt": "current framework Topic-first",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "path_prefix": "optional per search call"
+      },
+      "answer": {
+        "field": "answer",
+        "compression": false,
+        "dual_fields": false
+      },
+      "judge": {
+        "model": "openai/gpt-4o-mini",
+        "temperature": 0,
+        "answer_input": "complete answer",
+        "implementation_packaged": false,
+        "protocol": "pinned LightMem",
+        "reference_commit": "8449d574df6bae1bdf3314a1564da65e2f37e046",
+        "top_p": 0.95,
+        "aggregation": "question accuracy"
+      }
+    }
+  }
+}

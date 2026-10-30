@@ -1,0 +1,22 @@
+{
+  "locomo": {
+    "max_turns": 20,
+    "search_tools": "split",
+    "verify_sources": true
+  },
+  "beam-100k": {
+    "max_turns": 120,
+    "search_tools": "split",
+    "verify_sources": true
+  },
+  "beam-1m": {
+    "max_turns": 120,
+    "search_tools": "split",
+    "verify_sources": true
+  },
+  "longmemeval-s": {
+    "max_turns": 120,
+    "search_tools": "split",
+    "verify_sources": true
+  }
+}
