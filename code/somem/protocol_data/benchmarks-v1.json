@@ -97,7 +97,7 @@
         "temperature": 0,
         "answer_input": "complete answer",
         "implementation_packaged": true,
-        "protocol": "LightMem strictJudge",
+        "protocol": "judge",
         "sha256": "753889df01f381980b1d96a4aab480b5ff8b0919e0e0ac7092bbf828bdfe1dc6",
         "categories": [
           1,
@@ -205,7 +205,7 @@
         "temperature": 0,
         "answer_input": "complete answer",
         "implementation_packaged": true,
-        "protocol": "Mem0 rubric-nugget",
+        "protocol": "judge",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
         "aggregation": "mean question nugget score and PASS >= 0.5",
         "adapter_available": true
@@ -307,7 +307,7 @@
         "temperature": 0,
         "answer_input": "complete answer",
         "implementation_packaged": true,
-        "protocol": "Mem0 rubric-nugget",
+        "protocol": "judge",
         "sha256": "8215b640998d9554ccddd814ce48fdba355db575e35de5eb82f9cdbe7b195b81",
         "aggregation": "mean question nugget score and PASS >= 0.5",
         "adapter_available": true
@@ -409,7 +409,7 @@
         "temperature": 0,
         "answer_input": "complete answer",
         "implementation_packaged": true,
-        "protocol": "pinned LightMem",
+        "protocol": "judge",
         "reference_commit": "8449d574df6bae1bdf3314a1564da65e2f37e046",
         "top_p": 0.95,
         "aggregation": "question accuracy",
