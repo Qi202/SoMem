@@ -18,6 +18,7 @@ h1{font-size:46px;line-height:1.25;letter-spacing:-1.1px;margin:0;text-align:lef
 .publication-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:22px}
 .button{display:inline-flex;align-items:center;gap:8px;background:#363636;border:1px solid #363636;border-radius:999px;color:#fff;padding:7px 19px;font-size:16px}
 .button:hover{background:#222;text-decoration:none}.button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.button .github-icon{fill:currentColor;stroke:none}
 .section{padding-top:40px;padding-bottom:40px}.intro{padding-top:8px}
 h2{font-size:32px;line-height:1.25;margin:0 0 25px;font-weight:650;text-align:center}
 h3{font-size:20px;line-height:1.4;margin:0 0 12px;font-weight:600}
