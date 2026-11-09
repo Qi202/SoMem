@@ -13,7 +13,6 @@ Shirong Wang<sup>1</sup>, Jinyang Li<sup>1</sup>, Xian Wu<sup>2</sup>, Xiangyu Z
 </p>
 
 <h4>
-<a href="https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory">📄 Paper Source</a> &nbsp;
 <a href="https://qi202.github.io/SoMem/">🌐 Project Page</a>
 </h4>
 
@@ -168,7 +167,6 @@ derived from [Mem0](https://github.com/mem0ai/mem0). See the
 
 ## :memo: Citation
 
-The manuscript source is available [here](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory).
 Until an archival identifier is available, it can be cited as a manuscript:
 
 ```bibtex
@@ -176,8 +174,7 @@ Until an archival identifier is available, it can be cited as a manuscript:
   title  = {Can LLM Agents Organize Their Own Memory?},
   author = {Fu, Zichuan and Qi, Junjia and Zhang, Wenlin and Deng, Yimin and
             Wang, Shirong and Li, Jinyang and Wu, Xian and Zhao, Xiangyu},
-  note   = {Manuscript},
-  url    = {https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory}
+  note   = {Manuscript}
 }
 ```
 
