@@ -38,3 +38,5 @@ footer{background:#fafafa;padding:32px 0;text-align:center;font-size:14px;color:
 .skip-link{position:absolute;left:16px;top:-100px;background:white;padding:10px;z-index:10}.skip-link:focus{top:12px}
 @media(max-width:768px){.container{width:calc(100% - 32px)}.hero{padding:32px 0}.title-row{flex-direction:column;gap:16px}.logo{width:84px;height:84px}h1{font-size:30px;text-align:center;letter-spacing:-.5px}.authors{font-size:18px}.affiliations{font-size:17px}.notes{font-size:14px}.intro-grid{grid-template-columns:1fr;gap:24px}.intro-grid figure{max-width:420px;margin-inline:auto}.section{padding-top:28px;padding-bottom:28px}.intro{padding-top:8px}h2{font-size:28px}.abstract p,.caption{text-align:left}.left-title{font-size:23px}th,td{padding:9px 12px}pre{padding:16px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.best-results{padding-top:8px}.best-intro{text-align:center;margin-bottom:22px}.best-intro strong{font-size:23px;color:var(--accent)}.subset-heading{margin-top:28px}

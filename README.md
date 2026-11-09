@@ -19,6 +19,32 @@ Shirong Wang<sup>1</sup>, Jinyang Li<sup>1</sup>, Xian Wu<sup>2</sup>, Xiangyu Z
 <!-- Add the arXiv Paper link here when the identifier is available. -->
 </div>
 
+## :trophy: Best Reported Results
+
+**93.25% on LoCoMo · 90.20% on LongMemEval-S** — the highest full-set SoMem
+accuracy reported in the manuscript's backbone and cross-model experiments.
+These use different model configurations and are not part of the shared-Reader ranking below.
+
+| Benchmark | LJ accuracy | Evaluation set | Writer | Reader | Configuration |
+|---|---:|---|---|---|---|
+| **LoCoMo** | **93.25%** | All 1,540 category 1–4 questions | GPT-5.6 Luna | Qwen 3.8 Flash | Cross-model reuse of the Writer's frozen memory |
+| **LongMemEval-S** | **90.20%** | All 500 questions | DeepSeek V4 Flash | DeepSeek V4 Flash | Same-model construction and answering; up to 50 QA turns |
+
+Both use GPT-4o-mini judging. The manuscript does not explicitly specify the
+Reader reasoning-effort setting for these two configurations.
+
+**Reader-effort experiments (fixed subsets, not full-set scores):**
+
+| Benchmark | Best subset score | Questions | Reader | Requested effort |
+|---|---:|---:|---|---|
+| LoCoMo | **95.00%** LJ accuracy | 100 | GPT-6.1 Sol | xHigh |
+| BEAM-100K | **70.83%** mean nugget score | 200 | Qwen 3.8 Flash | None |
+
+Each sweep reuses constructed memory and the same questions. Its Writer is not
+identified in the manuscript's scaling table or accompanying text. See
+[model configurations and result provenance](docs/results.md#best-reported-configurations)
+for the evidence and reporting scope. These manuscript results have not been rerun with the public recipes.
+
 <div align="center">
 <a href="docs/assets/somem-overview.pdf"><img src="docs/assets/somem-overview.png" width="100%" alt="Overview of SoMem: writing memory, persistent documents, and evidence-based reading"></a>
 </div>
@@ -45,9 +71,10 @@ be configured independently and use the same saved memory workspace.
 🎯 **SoMem outperforms the strongest compared baseline by 2.66, 3.10, and 2.00
 percentage points** on LoCoMo, BEAM-100K, and LongMemEval-S, respectively.
 
-## :bar_chart: Main Results
+## :bar_chart: Shared-Reader Comparison
 
-Table 1. Results (%) with the shared GPT-6 Luna Reader and GPT-4o-mini judge.
+Results (%) with the shared GPT-6 Luna Reader and GPT-4o-mini judge.
+All memory methods use GPT-6 Luna for both Writer and Reader, with no Reader reasoning effort.
 LoCoMo and LongMemEval-S report LLM-judge accuracy; BEAM-100K reports mean nugget score.
 
 | Method | LoCoMo | BEAM-100K | LongMemEval-S |

@@ -1,5 +1,41 @@
 # Results and provenance
 
+## Best reported configurations
+
+The highlighted scores were checked against the manuscript's backbone comparison,
+Writer–Reader matrix, scaling tables, and evaluation appendix. No paper-source
+repository links are published here; the arXiv link will be added when available.
+
+| Result | Manuscript evidence | Writer | Reader | Configuration and scope |
+|---|---|---|---|---|
+| LoCoMo 93.25% LJ accuracy | Writer–Reader matrix, GPT-5.6 Luna Writer / Qwen 3.8 Flash Reader row | GPT-5.6 Luna | Qwen 3.8 Flash | All 1,540 category 1–4 questions; the same Writer's frozen memory is reused across Readers |
+| LongMemEval-S 90.20% LJ accuracy | LongMemEval-S comparison, additional-backbone row | DeepSeek V4 Flash | DeepSeek V4 Flash | All 500 questions; agent-controlled search, up to 50 QA turns |
+| LoCoMo 95.00% LJ accuracy | LoCoMo scaling details, GPT-6.1 Sol / xHigh row | Not specified for the sweep | GPT-6.1 Sol | Fixed 100-question subset; requested effort xHigh |
+| BEAM-100K 70.83% mean nugget score | BEAM-100K scaling details, Qwen 3.8 Flash / None row | Not specified for the sweep | Qwen 3.8 Flash | Fixed 200-question subset; requested effort None |
+
+All four use GPT-4o-mini judging. The manuscript does not explicitly report Reader
+reasoning effort for the two highlighted full-set configurations. Its statement
+that primary comparisons use no reasoning effort is not assumed to cover these
+additional-backbone or cross-model runs. The scaling analysis reuses memory and
+questions within each sweep but does not identify its Writer. The two subset
+maxima must not be compared as if they were the full-set scores below.
+
+### Full-set LoCoMo cross-model reuse
+
+Overall LJ accuracy (%) on all 1,540 questions. Each row uses one Writer's frozen
+memory with four Readers. This is a comparison of model configurations within
+SoMem, not a ranking against other memory methods.
+
+| Writer / Reader | GPT-5.6 Luna | Gemini 3 Flash | DeepSeek V4 Flash | Qwen 3.8 Flash |
+|---|---:|---:|---:|---:|
+| GPT-5.6 Luna | 92.34 | 92.79 | 93.18 | **93.25** |
+| Gemini 3 Flash | 91.95 | 91.17 | 93.12 | 91.23 |
+| DeepSeek V4 Flash | 92.01 | 92.86 | 92.73 | 90.13 |
+
+The same-model LoCoMo rows in the main table report 92.73% for DeepSeek V4 Flash,
+92.34% for GPT-5.6 Luna, and 91.17% for Gemini 3 Flash. The cross-model result
+93.25% is higher than these same-model configurations.
+
 ## Primary manuscript comparison
 
 The README reports the primary comparison in the manuscript.
@@ -34,6 +70,10 @@ reported the following best observed scores across evaluated configurations:
 | LongMemEval-S | Accuracy | 90.20 | 500 |
 | BEAM-100K | Mean nugget score | 61.19 | 400 |
 | BEAM-1M | Mean nugget score | 63.24 | 700 |
+
+The LoCoMo and LongMemEval-S scores above now have verified model mappings in
+the manuscript, as documented under Best reported configurations. The historical
+README alone does not establish the remaining configurations.
 
 That README specifies GPT-4o-mini judging and identifies the BEAM-100K value as
 the **w/o Derived** configuration. It does not provide a complete per-row mapping

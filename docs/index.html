@@ -41,6 +41,32 @@
     <!-- Add the official arXiv abstract and PDF links after the identifier is assigned. -->
   </header>
 
+  <section id="best-results" class="section container best-results" aria-labelledby="best-results-title">
+    <h2 id="best-results-title">Best Reported Results</h2>
+    <p class="best-intro"><strong>93.25% on LoCoMo · 90.20% on LongMemEval-S</strong><br>Highest full-set SoMem accuracy in the manuscript's backbone and cross-model experiments.</p>
+    <div class="table-container" tabindex="0" role="region" aria-label="Best full-set configurations; scroll horizontally on small screens">
+      <table>
+        <thead><tr><th scope="col">Benchmark</th><th scope="col">LJ accuracy</th><th scope="col">Questions</th><th scope="col">Writer</th><th scope="col">Reader</th></tr></thead>
+        <tbody>
+          <tr class="ours"><th scope="row">LoCoMo</th><td>93.25%</td><td>1,540 (all, categories 1–4)</td><td>GPT-5.6 Luna</td><td>Qwen 3.8 Flash</td></tr>
+          <tr class="ours"><th scope="row">LongMemEval-S</th><td>90.20%</td><td>500 (all)</td><td>DeepSeek V4 Flash</td><td>DeepSeek V4 Flash</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">LoCoMo reuses frozen memory across Writer and Reader models. LongMemEval-S uses the same model for construction and answering, with up to 50 QA turns. Both use GPT-4o-mini judging; the manuscript does not explicitly specify Reader reasoning effort for these configurations. Different-model results are separate from the <a href="#results">shared-Reader comparison</a>.</p>
+    <h3 class="subset-heading">Reader-effort experiments — fixed subsets</h3>
+    <div class="table-container" tabindex="0" role="region" aria-label="Best subset results; scroll horizontally on small screens">
+      <table>
+        <thead><tr><th scope="col">Benchmark</th><th scope="col">Best subset score</th><th scope="col">Questions</th><th scope="col">Reader</th><th scope="col">Requested effort</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">LoCoMo</th><td><b>95.00%</b> LJ accuracy</td><td>100</td><td>GPT-6.1 Sol</td><td>xHigh</td></tr>
+          <tr><th scope="row">BEAM-100K</th><td><b>70.83%</b> mean nugget score</td><td>200</td><td>Qwen 3.8 Flash</td><td>None</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">These are subset scores, not full-set results. Memory and questions are reused within each sweep; the scaling tables and accompanying text do not identify the Writer. See <a href="https://github.com/Qi202/SoMem/blob/main/docs/results.md#best-reported-configurations">configurations and result provenance</a>. These manuscript results have not been rerun with the public recipes.</p>
+  </section>
+
   <section class="section intro container" aria-labelledby="highlights-title">
     <div class="intro-grid">
       <figure>
@@ -77,9 +103,9 @@
   </section>
 
   <section id="results" class="section container">
-    <h2>Results</h2>
+    <h2>Shared-Reader Comparison</h2>
     <h3>LoCoMo, BEAM-100K, and LongMemEval-S</h3>
-    <p class="table-caption"><b>Table 1.</b> Main comparison with the shared GPT-6 Luna Reader and GPT-4o-mini judge. LoCoMo and LongMemEval-S report overall LLM-judge accuracy (%); BEAM-100K reports mean nugget score (%). These are separate benchmark metrics.</p>
+    <p class="table-caption"><b>Table 1.</b> Main comparison with the shared GPT-6 Luna Reader and GPT-4o-mini judge. All memory methods use GPT-6 Luna for Writer and Reader, with no Reader reasoning effort. LoCoMo and LongMemEval-S report overall LLM-judge accuracy (%); BEAM-100K reports mean nugget score (%). These are separate benchmark metrics.</p>
     <div class="table-container" tabindex="0" role="region" aria-label="Main results table; scroll horizontally on small screens">
       <table>
         <thead><tr><th scope="col">Method</th><th scope="col">LoCoMo</th><th scope="col">BEAM-100K</th><th scope="col">LongMemEval-S</th></tr></thead>
