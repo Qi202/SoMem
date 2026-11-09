@@ -2,15 +2,15 @@
 
 ## Primary manuscript comparison
 
-The README reports the primary comparison in the manuscript snapshot
-[`b7eea94`](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory/tree/b7eea94).
+The README reports the primary comparison in the manuscript.
+A public paper link will be added when the arXiv identifier is available.
 The values are transcribed from these tables:
 
-| Benchmark | Manuscript source | Metric | Questions | SoMem | Strongest comparator | Gain (pp) |
+| Benchmark | Manuscript table | Metric | Questions | SoMem | Strongest comparator | Gain (pp) |
 |---|---|---|---:|---:|---|---:|
-| LoCoMo | [Main results](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory/blob/b7eea94/tables/locomo_by_subset.tex) | Overall LJ accuracy (%) | 1,540 | 88.96 | E-mem, 86.30 | +2.66 |
-| BEAM-100K | [Method comparison](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory/blob/b7eea94/tables/beam_method_comparison.tex) | Mean nugget score (%) | 400 | 54.02 | Full Context, 50.92 | +3.10 |
-| LongMemEval-S | [Method comparison](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory/blob/b7eea94/tables/longmemeval_comparison.tex) | Overall LJ accuracy (%) | 500 | 76.50 | LightMem, 74.50 | +2.00 |
+| LoCoMo | Main results | Overall LJ accuracy (%) | 1,540 | 88.96 | E-mem, 86.30 | +2.66 |
+| BEAM-100K | Method comparison | Mean nugget score (%) | 400 | 54.02 | Full Context, 50.92 | +3.10 |
+| LongMemEval-S | Method comparison | Overall LJ accuracy (%) | 500 | 76.50 | LightMem, 74.50 | +2.00 |
 
 The primary memory-method rows use GPT-6 Luna as Writer and Reader and GPT-4o-mini
 as judge. Full Context directly answers from the original conversation and has
@@ -52,7 +52,7 @@ manuscript scores have been rerun with the current code and settings.
 One concrete distinction is the Reader turn budget: the current public recipes
 use 20 turns for LoCoMo and 120 for BEAM and LongMemEval-S, while the manuscript's
 primary evaluation describes 20 for LoCoMo and 50 for BEAM-100K and LongMemEval-S.
-See the [manuscript evaluation details](https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory/blob/b7eea94/6ExperimentAppendix.tex)
+See the manuscript evaluation details
 and [current public Reader settings](benchmarks/reader-settings.md).
 
 The runner writes individual answers, verdicts, and run metadata; it does not
