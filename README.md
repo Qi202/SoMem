@@ -1,4 +1,6 @@
 <div align="center">
+<img src="docs/assets/somem-agent.png" width="140" alt="SoMem agent organizing linked memory documents">
+<br>
 <img src="docs/assets/somem-title.svg" width="90%" alt="SoMem: Can LLM Agents Organize Their Own Memory?">
 <hr>
 

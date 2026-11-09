@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="230" viewBox="0 0 1400 230" role="img" aria-labelledby="title desc">
   <title id="title">SoMem: Can LLM Agents Organize Their Own Memory?</title>
-  <desc id="desc">SoMem in teal, above the paper title on a white background.</desc>
+  <desc id="desc">SoMem in indigo, above the paper title on a white background.</desc>
   <rect width="1400" height="230" rx="12" fill="white"/>
-  <text x="700" y="111" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="100" font-weight="700" fill="#087f8c">SoMem</text>
+  <text x="700" y="111" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="100" font-weight="700" fill="#4446a8">SoMem</text>
   <text x="700" y="188" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="45" font-weight="600" fill="#172b3a">Can LLM Agents Organize Their Own Memory?</text>
 </svg>

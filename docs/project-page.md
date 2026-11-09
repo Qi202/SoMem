@@ -6,7 +6,7 @@ site: no build tool, JavaScript, or external font/icon service is required.
 
 - `index.html`: paper title, authors, approved abstract, method, results, and citation.
 - `site.css`: desktop and mobile layouts.
-- `assets/somem-mark.svg`: project-page mark and favicon.
+- `assets/somem-agent.png`: approved Agent icon without a wordmark, used by the page, favicon, and README.
 - `assets/document-format.png`: rendered from the manuscript's document-format figure.
 - `assets/somem-overview.png` and `.pdf`: framework illustration shared with the README.
 
