@@ -13,10 +13,11 @@ Shirong Wang<sup>1</sup>, Jinyang Li<sup>1</sup>, Xian Wu<sup>2</sup>, Xiangyu Z
 </p>
 
 <h4>
-<a href="https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory">📄 Paper Source</a>
+<a href="https://github.com/fzkuji2026/2027-arXiv-Zichuan-Fu-Agent-Memory">📄 Paper Source</a> &nbsp;
+<a href="https://qi202.github.io/SoMem/">🌐 Project Page</a>
 </h4>
 
-<!-- Add arXiv Paper and Project Page links here when they are publicly available. -->
+<!-- Add the arXiv Paper link here when the identifier is available. -->
 </div>
 
 <div align="center">

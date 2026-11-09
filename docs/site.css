@@ -1,0 +1,40 @@
+/* Layout adapted from GUI-Lens / Nerfies (CC BY-SA 4.0); see page footer. */
+:root{color-scheme:light;--ink:#363636;--muted:#666;--accent:#087f8c}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6}
+a{color:#1687c9;text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:5px}
+.container{width:min(960px,calc(100% - 48px));margin-inline:auto}
+.hero{padding-top:48px;padding-bottom:42px;text-align:center}
+.title-row{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:24px}
+.logo{width:120px;height:120px;flex:none}
+h1{font-size:46px;line-height:1.25;letter-spacing:-1.1px;margin:0;text-align:left;font-weight:650}
+.name{color:var(--accent)}
+.authors{font-size:20px;line-height:1.65;max-width:920px;margin-inline:auto}
+.authors span,.affiliations span,.notes span{display:inline-block}
+.authors span{margin:0 3px}.affiliations{font-size:19px;margin-top:12px}.affiliations span{margin:0 10px}
+.notes{margin-top:8px;color:#7a7a7a;font-size:15px}.notes span{margin:0 12px}sup{font-size:.7em;line-height:0;vertical-align:super}
+.publication-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:22px}
+.button{display:inline-flex;align-items:center;gap:8px;background:#363636;border:1px solid #363636;border-radius:999px;color:#fff;padding:7px 19px;font-size:16px}
+.button:hover{background:#222;text-decoration:none}.button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.section{padding-top:40px;padding-bottom:40px}.intro{padding-top:8px}
+h2{font-size:32px;line-height:1.25;margin:0 0 25px;font-weight:650;text-align:center}
+h3{font-size:20px;line-height:1.4;margin:0 0 12px;font-weight:600}
+.left-title{font-size:24px;text-align:left;margin-bottom:18px}
+p{margin:0 0 18px}figure{margin:0}img{display:block;max-width:100%;height:auto}
+.intro-grid{display:grid;grid-template-columns:2fr 3fr;align-items:center;gap:30px}
+.document-example{width:100%;height:auto}
+.highlights{list-style:none;padding:0;margin:0}.highlights li{display:flex;gap:10px;margin-bottom:15px;line-height:1.55}.highlights li:last-child{margin-bottom:0}.highlights li>span:first-child{flex:none}
+.caption{font-size:15px;color:#4a4a4a;line-height:1.6;margin-top:14px;margin-bottom:0;text-align:justify}
+.abstract{max-width:790px;margin-inline:auto}.abstract p{text-align:justify;line-height:1.75}.abstract p:last-child{margin-bottom:0}
+.table-caption{font-size:15px;color:#4a4a4a;margin-bottom:12px}.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:10px 12px;text-align:center;border-bottom:1px solid #dbdbdb;vertical-align:middle}th:first-child{text-align:left}tbody th{font-weight:400}thead th{border-bottom:2px solid #363636;font-weight:600}
+tbody tr:hover{background:#fafafa}.ours th,.ours td{background:#eef3fb;color:#1d4e9e;font-weight:700}.gain th,.gain td{color:#2f7d4f;font-weight:600}.gain th{font-size:14px}
+code{font-family:Consolas,Monaco,monospace;font-size:.9em}p code,figcaption code{background:#f5f5f5;padding:2px 4px}
+.citation h2{text-align:left;margin-bottom:18px}pre{margin:0;background:#f5f5f5;border-radius:6px;padding:22px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+footer{background:#fafafa;padding:32px 0;text-align:center;font-size:14px;color:var(--muted)}footer p{margin:0 0 12px}footer p:last-child{margin:0}
+.skip-link{position:absolute;left:16px;top:-100px;background:white;padding:10px;z-index:10}.skip-link:focus{top:12px}
+@media(max-width:768px){.container{width:calc(100% - 32px)}.hero{padding:32px 0}.title-row{flex-direction:column;gap:16px}.logo{width:84px;height:84px}h1{font-size:30px;text-align:center;letter-spacing:-.5px}.authors{font-size:18px}.affiliations{font-size:17px}.notes{font-size:14px}.intro-grid{grid-template-columns:1fr;gap:24px}.intro-grid figure{max-width:420px;margin-inline:auto}.section{padding-top:28px;padding-bottom:28px}.intro{padding-top:8px}h2{font-size:28px}.abstract p,.caption{text-align:left}.left-title{font-size:23px}th,td{padding:9px 12px}pre{padding:16px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
