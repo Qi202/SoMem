@@ -3,8 +3,9 @@
 ## Best reported configurations
 
 The highlighted scores were checked against the manuscript's backbone comparison,
-Writer–Reader matrix, scaling tables, and evaluation appendix. No paper-source
-repository links are published here; the arXiv link will be added when available.
+Writer–Reader matrix, scaling tables, and evaluation appendix of
+[arXiv:2611.11929](https://arxiv.org/abs/2611.11929).
+The [full paper HTML](https://arxiv.org/html/2611.11929v1) includes these tables and settings.
 
 | Result | Manuscript evidence | Writer | Reader | Configuration and scope |
 |---|---|---|---|---|
@@ -39,7 +40,7 @@ The same-model LoCoMo rows in the main table report 92.73% for DeepSeek V4 Flash
 ## Primary manuscript comparison
 
 The README reports the primary comparison in the manuscript.
-A public paper link will be added when the arXiv identifier is available.
+The paper is available as [arXiv:2611.11929](https://arxiv.org/abs/2611.11929).
 The values are transcribed from these tables:
 
 | Benchmark | Manuscript table | Metric | Questions | SoMem | Strongest comparator | Gain (pp) |
@@ -92,7 +93,7 @@ manuscript scores have been rerun with the current code and settings.
 One concrete distinction is the Reader turn budget: the current public recipes
 use 20 turns for LoCoMo and 120 for BEAM and LongMemEval-S, while the manuscript's
 primary evaluation describes 20 for LoCoMo and 50 for BEAM-100K and LongMemEval-S.
-See the manuscript evaluation details
+See the [paper evaluation details](https://arxiv.org/html/2611.11929v1)
 and [current public Reader settings](benchmarks/reader-settings.md).
 
 The runner writes individual answers, verdicts, and run metadata; it does not

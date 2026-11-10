@@ -15,10 +15,11 @@ Shirong Wang<sup>1</sup>, Jinyang Li<sup>1</sup>, Xian Wu<sup>2</sup>, Xiangyu Z
 </p>
 
 <h4>
+<a href="https://arxiv.org/pdf/2611.11929">📄 Paper</a> &nbsp;
+<a href="https://arxiv.org/abs/2611.11929">arXiv</a> &nbsp;
+<a href="https://arxiv.org/html/2611.11929v1">HTML</a> &nbsp;
 <a href="https://qi202.github.io/SoMem/">🌐 Project Page</a>
 </h4>
-
-<!-- Add the arXiv Paper link here when the identifier is available. -->
 </div>
 
 ## :trophy: Best Reported Results
@@ -196,14 +197,19 @@ derived from [Mem0](https://github.com/mem0ai/mem0). See the
 
 ## :memo: Citation
 
-Until an archival identifier is available, it can be cited as a manuscript:
+If you find SoMem useful in your research, please cite [our paper](https://arxiv.org/abs/2611.11929):
 
 ```bibtex
-@unpublished{fu_somem,
-  title  = {Can LLM Agents Organize Their Own Memory?},
-  author = {Fu, Zichuan and Qi, Junjia and Zhang, Wenlin and Deng, Yimin and
-            Wang, Shirong and Li, Jinyang and Wu, Xian and Zhao, Xiangyu},
-  note   = {Manuscript}
+@article{fu2026somem,
+  title   = {Can LLM Agents Organize Their Own Memory?},
+  author  = {Fu, Zichuan and Qi, Junjia and Zhang, Wenlin and Deng, Yimin and
+             Wang, Shirong and Li, Jinyang and Wu, Xian and Zhao, Xiangyu},
+  journal = {arXiv preprint arXiv:2611.11929},
+  year    = {2026},
+  eprint  = {2611.11929},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url     = {https://arxiv.org/abs/2611.11929}
 }
 ```
 

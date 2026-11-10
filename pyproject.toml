@@ -21,6 +21,8 @@ somem = "somem.cli:main"
 somem-benchmark = "somem.benchmark:main"
 
 [project.urls]
+Homepage = "https://qi202.github.io/SoMem/"
+Paper = "https://arxiv.org/abs/2611.11929"
 Repository = "https://github.com/Qi202/SoMem"
 Issues = "https://github.com/Qi202/SoMem/issues"
 Documentation = "https://github.com/Qi202/SoMem/tree/main/docs"

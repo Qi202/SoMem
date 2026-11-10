@@ -14,9 +14,10 @@ Preview from the repository root with `python -m http.server 8769 --directory do
 Changes pushed to `main` are published by GitHub Pages. Confirm the Pages build
 finishes and the live URL shows the expected revision.
 
-When the arXiv identifier is assigned, add Paper (PDF) and arXiv (abstract) buttons
-in `index.html`, update its BibTeX, and update the paper link and citation in the
-root README. Keep the project-page URL in the repository About website field.
+The page and README link to [arXiv:2611.11929](https://arxiv.org/abs/2611.11929),
+its PDF, and the arXiv HTML version. Keep their BibTeX entries synchronized.
+The abstract and PDF URLs track the latest version; the HTML link currently targets v1.
+Keep the project-page URL in the repository About website field.
 
 ## Layout attribution
 

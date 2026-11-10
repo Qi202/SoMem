@@ -38,7 +38,7 @@ through OpenRouter; its scope and unexercised paths are recorded in validation.
 | Source-archive newline compatibility | P1 | Fixed: LF/CRLF/CR compare consistently, content integrity remains strict; 14 new regression cases and 261 total tests passed |
 | Limit automatic Git commits to memory files | P1 | Fixed: path-scoped commits preserve unrelated staged/unstaged changes; 8 new regressions and 269 total tests passed |
 | Correct transaction source attribution | P1 | Fixed: new manual imports use transaction IDs; existing IDs/citations preserved; code/docs and 4 regressions updated |
-| Citation metadata and repository About/topics | P1 | Final paper/author metadata and remote update deferred |
+| Citation metadata and repository About/topics | P1 | Paper/author metadata, arXiv:2611.11929 citation, and repository About updated |
 | Short video, notebook and broader integrations | P2 | Future work |
 
 Observed local checks and their limits are recorded in [validation](validation.md).
